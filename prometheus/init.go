@@ -4,6 +4,7 @@ import (
 	"dataUtils/aws"
 	"dataUtils/utils"
 	"fmt"
+	"regexp"
 )
 
 var (
@@ -15,6 +16,8 @@ var (
 	MetricsCredentials    aws.CredentialsType
 	metricsCredentialsKey string
 	awsSecretsManager     string
+	reInitialSplit        = regexp.MustCompile(`(.+){(.+)}\s(\d+\.?\d*)`)
+	reTagSplit            = regexp.MustCompile(`(\w+)="(.+)"`)
 )
 
 func init() {

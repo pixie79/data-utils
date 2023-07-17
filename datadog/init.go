@@ -2,13 +2,10 @@ package datadog
 
 import (
 	"dataUtils/utils"
-	"regexp"
 	"strconv"
 )
 
 var (
-	reInitialSplit        = regexp.MustCompile(`(.+){(.+)}\s(\d+\.?\d*)`)
-	reTagSplit            = regexp.MustCompile(`(\w+)="(.+)"`)
 	metricsBatchLength    string
 	metricsBatchLengthInt int
 )
