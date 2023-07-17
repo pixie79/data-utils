@@ -1,0 +1,36 @@
+package kafka
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/twmb/franz-go/pkg/kgo"
+)
+
+func ProduceMessages(ctx context.Context, client *kgo.Client, record []*kgo.Record) error {
+	var (
+		errPromise kgo.FirstErrPromise
+	)
+
+	for _, s := range record {
+		client.Produce(ctx, s, errPromise.Promise())
+	}
+	// Wait for all the records to be flushed or for an error to be returned.
+	return errPromise.Err()
+}
+
+func RollbackTransaction(client *kgo.Client) error {
+	// Background context is used because cancelling either of these operations can result
+	// in buffered messages being added to the next transaction.
+	ctx := context.Background()
+	// Remove any records that have not yet been flushed.
+	err := client.AbortBufferedRecords(ctx)
+	if err != nil {
+		return err
+	}
+	// End the transaction itself so that flushed records will be committed.
+	if err := client.EndTransaction(ctx, kgo.TryAbort); err != nil {
+		return fmt.Errorf("error committing transaction: %v", err)
+	}
+	return nil
+}

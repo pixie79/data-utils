@@ -2,15 +2,17 @@ package utils
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/joho/godotenv"
 	"golang.org/x/exp/slog"
-	"os"
 )
 
 var (
-	Logger   *slog.Logger
-	logLevel string
-	Err      error
+	Logger      *slog.Logger
+	logLevel    string
+	Err         error
+	Hostname, _ = os.Hostname()
 )
 
 func init() {

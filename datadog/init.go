@@ -1,8 +1,9 @@
 package datadog
 
 import (
-	"github.com/pixie79/data-utils/utils"
 	"strconv"
+
+	"github.com/pixie79/data-utils/utils"
 )
 
 var (

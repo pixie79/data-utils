@@ -2,13 +2,14 @@ package prometheus
 
 import (
 	"fmt"
-	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
-	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
-	"github.com/pixie79/data-utils"
-	"github.com/pixie79/data-utils/utils"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
+	data_utils "github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils/utils"
 )
 
 func SplitTags(data string) []data_utils.TagsType {

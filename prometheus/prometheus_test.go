@@ -7,19 +7,19 @@ func TestSplitTags(t *testing.T) {
 	result := SplitTags(data)
 
 	if len(result) != 3 {
-		t.Errorf("Expected 3 tags, got %d", len(result))
+		t.Errorf("expected 3 tags, got %d", len(result))
 	}
 
 	if result[0].Name != "a" || result[0].Value != "b" {
-		t.Errorf("Expected 'a:b', got '%s:%s'", result[0].Name, result[0].Value)
+		t.Errorf("expected 'a:b', got '%s:%s'", result[0].Name, result[0].Value)
 	}
 
 	if result[1].Name != "c" || result[1].Value != "d" {
-		t.Errorf("Expected 'c:d', got '%s:%s'", result[1].Name, result[1].Value)
+		t.Errorf("expected 'c:d', got '%s:%s'", result[1].Name, result[1].Value)
 	}
 
 	if result[2].Name != "e" || result[2].Value != "f" {
-		t.Errorf("Expected 'e:f', got '%s:%s'", result[2].Name, result[2].Value)
+		t.Errorf("expected 'e:f', got '%s:%s'", result[2].Name, result[2].Value)
 	}
 }
 
@@ -35,38 +35,38 @@ func TestBuildMetrics(t *testing.T) {
 	result := BuildMetrics(payload)
 
 	if len(result) != 3 {
-		t.Errorf("Expected 3 metrics, got %d", len(result))
+		t.Errorf("expected 3 metrics, got %d", len(result))
 	}
 
 	if result[0].Metric != `redpanda.redpanda_cloud_storage_segments_pending_deletion` {
-		t.Errorf("Expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'", result[0].Metric)
+		t.Errorf("expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'", result[0].Metric)
 	}
 
 	if result[0].Tags[0] != `redpanda_namespace=kafka` {
-		t.Errorf("Expected tag 'redpanda_namespace=kafka', got '%s'", result[0].Tags[0])
+		t.Errorf("expected tag 'redpanda_namespace=kafka', got '%s'", result[0].Tags[0])
 	}
 
 	if result[0].Tags[1] != `redpanda_topic=test` {
-		t.Errorf(`Expected tag 'redpanda_topic="test"', got '%s'`, result[0].Tags[1])
+		t.Errorf(`expected tag 'redpanda_topic="test"', got '%s'`, result[0].Tags[1])
 	}
 
 	if result[0].Tags[2] != `instance=10.0.0.240:9644` {
-		t.Errorf(`Expected tag 'instance="10.0.0.240:9644', got '%s'`, result[0].Tags[2])
+		t.Errorf(`expected tag 'instance="10.0.0.240:9644', got '%s'`, result[0].Tags[2])
 	}
 
 	if result[1].Metric != `redpanda.redpanda_cloud_storage_segments_pending_deletion` {
-		t.Errorf(`Expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'`, result[1].Metric)
+		t.Errorf(`expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'`, result[1].Metric)
 	}
 
 	if result[1].Tags[0] != `redpanda_namespace=kafka` {
-		t.Errorf(`Expected tag 'redpanda_namespace=kafka', got '%s'`, result[1].Tags[0])
+		t.Errorf(`expected tag 'redpanda_namespace=kafka', got '%s'`, result[1].Tags[0])
 	}
 
 	if result[2].Metric != `redpanda.redpanda_cloud_storage_segments_pending_deletion` {
-		t.Errorf(`Expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'`, result[2].Metric)
+		t.Errorf(`expected metric 'redpanda.redpanda_cloud_storage_segments_pending_deletion', got '%s'`, result[2].Metric)
 	}
 
 	if result[2].Tags[0] != `redpanda_namespace=kafka` {
-		t.Errorf(`Expected tag 'redpanda_namespace=kafka', got '%s'`, result[2].Tags[0])
+		t.Errorf(`expected tag 'redpanda_namespace=kafka', got '%s'`, result[2].Tags[0])
 	}
 }

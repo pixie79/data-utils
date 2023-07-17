@@ -2,10 +2,11 @@ package prometheus
 
 import (
 	"fmt"
-	"github.com/pixie79/data-utils"
+	"regexp"
+
+	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/aws"
 	"github.com/pixie79/data-utils/utils"
-	"regexp"
 )
 
 var (
@@ -33,7 +34,7 @@ func init() {
 
 	MetricsUrl = fmt.Sprintf("%s%s%s", metricsProtocol, metricsServer, metricsUrlPath)
 
-	awsSecretsManager = utils.GetEnv("AWS_SECRETS_MANAGER", "true")
+	awsSecretsManager = utils.GetEnv("AWS_SECRETS_MANAGER", "false")
 	if awsSecretsManager == "true" {
 		metricsCredentialsKey = utils.GetEnv("METRICS_CREDENTIALS_KEY", "metrics-proxy")
 		MetricsCredentials = aws.FetchCredentials(metricsCredentialsKey)

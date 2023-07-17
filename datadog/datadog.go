@@ -3,6 +3,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
 	"github.com/pixie79/data-utils/utils"
@@ -19,7 +20,7 @@ func submitMetrics(metrics []datadogV2.MetricSeries) {
 	api := datadogV2.NewMetricsApi(apiClient)
 
 	_, r, err := api.SubmitMetrics(ctx, body, *datadogV2.NewSubmitMetricsOptionalParameters())
-	utils.MaybeDie(err, fmt.Sprintf("Error when calling `MetricsApi.SubmitMetrics`: %v, payload length: %d", r, len(metrics)))
+	utils.MaybeDie(err, fmt.Sprintf("calling `MetricsApi.SubmitMetrics`: %v, payload length: %d", r, len(metrics)))
 
 	utils.Logger.Debug(fmt.Sprintf("metrics submitted: %d: error code: %d", len(metrics), r.StatusCode))
 }
@@ -41,7 +42,7 @@ func ChunkMetrics(metrics []datadogV2.MetricSeries) {
 
 		utils.Logger.Debug(fmt.Sprintf("payload to large splitting current length: %d, total number of new batches: %d", metricsLength, chunkedMetricsLength))
 		for counter < chunkedMetricsLength {
-			utils.Logger.Debug(fmt.Sprintf("Submitting Batch: %d of %d records", counter, len(chunkedMetrics[counter])))
+			utils.Logger.Debug(fmt.Sprintf("submitting Batch: %d of %d records", counter, len(chunkedMetrics[counter])))
 			submitMetrics(chunkedMetrics[counter])
 			counter++
 		}
