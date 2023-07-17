@@ -2,10 +2,10 @@ package datadog
 
 import (
 	"context"
-	"dataUtils/utils"
 	"fmt"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
+	"github.com/pixie79/dataUtils/utils"
 )
 
 func submitMetrics(metrics []datadogV2.MetricSeries) {
@@ -24,7 +24,7 @@ func submitMetrics(metrics []datadogV2.MetricSeries) {
 	utils.Logger.Debug(fmt.Sprintf("metrics submitted: %d: error code: %d", len(metrics), r.StatusCode))
 }
 
-func chunkMetrics(metrics []datadogV2.MetricSeries) {
+func ChunkMetrics(metrics []datadogV2.MetricSeries) {
 	var (
 		counter       = 0
 		metricsLength = len(metrics)

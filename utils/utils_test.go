@@ -24,7 +24,7 @@ func TestDecryptKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := b64DecodeMsg(tt.key)
+			result, err := B64DecodeMsg(tt.key)
 			if err != nil {
 				t.Errorf(fmt.Sprintf("%+v", err))
 			}

@@ -1,9 +1,9 @@
 package prometheus
 
 import (
-	"dataUtils/aws"
-	"dataUtils/utils"
 	"fmt"
+	"github.com/pixie79/dataUtils/aws"
+	"github.com/pixie79/dataUtils/utils"
 	"regexp"
 )
 

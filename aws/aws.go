@@ -1,12 +1,12 @@
 package aws
 
 import (
-	"dataUtils/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
+	"github.com/pixie79/dataUtils/utils"
 )
 
 func FetchCredentials(credentialsKey string) CredentialsType {

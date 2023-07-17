@@ -4,7 +4,7 @@ import "testing"
 
 func TestSplitTags(t *testing.T) {
 	data := `a="b",c="d",e="f"`
-	result := splitTags(data)
+	result := SplitTags(data)
 
 	if len(result) != 3 {
 		t.Errorf("Expected 3 tags, got %d", len(result))
@@ -32,7 +32,7 @@ func TestBuildMetrics(t *testing.T) {
 		`redpanda_cloud_storage_segments_pending_deletion{redpanda_namespace="kafka",redpanda_topic="s3-connector-10x-dlq-ab",instance="10.0.0.240:9644"} 5.4`,
 	}
 
-	result := buildMetrics(payload)
+	result := BuildMetrics(payload)
 
 	if len(result) != 3 {
 		t.Errorf("Expected 3 metrics, got %d", len(result))
