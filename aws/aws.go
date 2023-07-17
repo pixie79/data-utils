@@ -6,12 +6,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	"github.com/pixie79/dataUtils/utils"
+	"github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils/utils"
 )
 
-func FetchCredentials(credentialsKey string) CredentialsType {
+func FetchCredentials(credentialsKey string) data_utils.CredentialsType {
 	credentialsString := GetSecretManagerValue(credentialsKey)
-	credentials := CredentialsType{}
+	credentials := data_utils.CredentialsType{}
 	err := json.Unmarshal([]byte(credentialsString), &credentials)
 	utils.MaybeDie(err, "could not explode credentials")
 	utils.Logger.Debug("credentials retrieved")

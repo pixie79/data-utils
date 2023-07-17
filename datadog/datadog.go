@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
-	"github.com/pixie79/dataUtils/utils"
+	"github.com/pixie79/data-utils/utils"
 )
 
 func submitMetrics(metrics []datadogV2.MetricSeries) {

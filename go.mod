@@ -1,4 +1,4 @@
-module github.com/pixie79/dataUtils
+module github.com/pixie79/data-utils
 
 go 1.20
 

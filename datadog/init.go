@@ -1,7 +1,7 @@
 package datadog
 
 import (
-	"github.com/pixie79/dataUtils/utils"
+	"github.com/pixie79/data-utils/utils"
 	"strconv"
 )
 

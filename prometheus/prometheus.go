@@ -4,21 +4,22 @@ import (
 	"fmt"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
-	"github.com/pixie79/dataUtils/utils"
+	"github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils/utils"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func SplitTags(data string) []TagsType {
-	var tags []TagsType
+func SplitTags(data string) []data_utils.TagsType {
+	var tags []data_utils.TagsType
 	sData := strings.Split(data, ",")
 
 	for _, tagsData := range sData {
 		tagsSplit := reTagSplit.FindAllSubmatch([]byte(tagsData), -1)
 
 		for _, v := range tagsSplit {
-			tag := TagsType{
+			tag := data_utils.TagsType{
 				Name:  string(v[1]),
 				Value: string(v[2]),
 			}
