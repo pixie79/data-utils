@@ -2,6 +2,7 @@ package prometheus
 
 import "testing"
 
+// TestSplitTags tests the SplitTags function
 func TestSplitTags(t *testing.T) {
 	data := `a="b",c="d",e="f"`
 	result := SplitTags(data)
@@ -23,6 +24,7 @@ func TestSplitTags(t *testing.T) {
 	}
 }
 
+// TestBuildMetrics tests the BuildMetrics function
 func TestBuildMetrics(t *testing.T) {
 	payload := []string{
 		`# HELP redpanda_cloud_storage_segments_pending_deletion Total number of segments pending deletion from the cloud for the topic`,

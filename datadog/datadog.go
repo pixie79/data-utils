@@ -1,3 +1,8 @@
+// Description: Datadog utils
+// Author: Pixie79
+// ============================================================================
+// package datadog
+
 package datadog
 
 import (
@@ -9,6 +14,7 @@ import (
 	"github.com/pixie79/data-utils/utils"
 )
 
+// SubmitMetrics submits the metrics to Datadog
 func submitMetrics(metrics []datadogV2.MetricSeries) {
 	body := datadogV2.MetricPayload{
 		Series: metrics,
@@ -25,6 +31,7 @@ func submitMetrics(metrics []datadogV2.MetricSeries) {
 	utils.Logger.Debug(fmt.Sprintf("metrics submitted: %d: error code: %d", len(metrics), r.StatusCode))
 }
 
+// ChunkMetrics splits the metrics into chunks of X and submits them to Datadog
 func ChunkMetrics(metrics []datadogV2.MetricSeries) {
 	var (
 		counter       = 0
@@ -41,6 +48,7 @@ func ChunkMetrics(metrics []datadogV2.MetricSeries) {
 		)
 
 		utils.Logger.Debug(fmt.Sprintf("payload to large splitting current length: %d, total number of new batches: %d", metricsLength, chunkedMetricsLength))
+		// submit the metrics in batches
 		for counter < chunkedMetricsLength {
 			utils.Logger.Debug(fmt.Sprintf("submitting Batch: %d of %d records", counter, len(chunkedMetrics[counter])))
 			submitMetrics(chunkedMetrics[counter])

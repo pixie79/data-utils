@@ -20,6 +20,7 @@ var (
 	list6 = []string{ip0, ip3, ip0}
 )
 
+// TestGetIPs tests the GetIPs function
 func TestGetEnv(t *testing.T) {
 	result := GetEnv("DEBUG_LEVEL", "TEST")
 	if result != "TEST" {
@@ -27,6 +28,7 @@ func TestGetEnv(t *testing.T) {
 	}
 }
 
+// TestDecryptKey tests the DecryptKey function
 func TestDecryptKey(t *testing.T) {
 	var tests = []struct {
 		name string
@@ -50,6 +52,7 @@ func TestDecryptKey(t *testing.T) {
 	}
 }
 
+// TestContains tests the Contains function
 func TestContains(t *testing.T) {
 	var tests = []struct {
 		name  string
@@ -70,6 +73,7 @@ func TestContains(t *testing.T) {
 	}
 }
 
+// TestDifferenceInSlices tests the DifferenceInSlices function
 func TestDifferenceInSlices(t *testing.T) {
 	var tests = []struct {
 		name      string

@@ -1,3 +1,8 @@
+// Description: Generic utils functions
+// Author: Pixie79
+// ============================================================================
+// package utils
+
 package utils
 
 import (
@@ -9,12 +14,13 @@ import (
 )
 
 var (
-	Logger      *slog.Logger
-	logLevel    string
-	Err         error
-	Hostname, _ = os.Hostname()
+	Logger      *slog.Logger    // Logger is the default logger
+	logLevel    string          // logLevel is the log level
+	Err         error           // Err is the default error
+	Hostname, _ = os.Hostname() // Hostname is the default hostname
 )
 
+// init loads the .env file and sets the log level
 func init() {
 	// loads values from .env into the system
 	if err := godotenv.Load(); err != nil {
@@ -24,6 +30,7 @@ func init() {
 	Logger = initLog()
 }
 
+// initLog initializes the logger
 func initLog() *slog.Logger {
 	switch logLevel {
 	case "DEBUG":

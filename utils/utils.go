@@ -1,3 +1,8 @@
+// Description: Generic utils functions
+// Author: Pixie79
+// ============================================================================
+// package utils
+
 package utils
 
 import (
@@ -12,11 +17,13 @@ import (
 	"time"
 )
 
+// Die prints an error message and exits
 func Die(err error, msg string) {
 	Logger.Error(fmt.Sprintf("%+v: %+v", msg, err))
 	os.Exit(1)
 }
 
+// MaybeDie prints an error message and exits if the error is not nil
 func MaybeDie(err error, msg string) {
 	if err != nil {
 		Die(err, msg)
@@ -31,6 +38,7 @@ func GetEnv(key string, defaultVal string) string {
 	return defaultVal
 }
 
+// GetEnvOrDie Simple helper function to read an environment or die
 func GetEnvOrDie(key string) string {
 	value, exists := os.LookupEnv(key)
 	if !exists {
@@ -39,6 +47,7 @@ func GetEnvOrDie(key string) string {
 	return value
 }
 
+// LinesFromReader reads lines from a reader
 func LinesFromReader(r io.Reader) []string {
 	var lines []string
 
@@ -53,12 +62,14 @@ func LinesFromReader(r io.Reader) []string {
 	return lines
 }
 
+// UrlToLines reads lines from a url
 func UrlToLines(url string, username string, password string) []string {
 	client := http.Client{Timeout: 5 * time.Second}
 
 	req, err := http.NewRequest(http.MethodGet, url, http.NoBody)
 	MaybeDie(err, "could not create http request")
 
+	// Add basic auth if username and password are set
 	if username != "" && password != "" {
 		req.SetBasicAuth(username, password)
 	}
@@ -78,6 +89,7 @@ func UrlToLines(url string, username string, password string) []string {
 	return LinesFromReader(res.Body)
 }
 
+// InBetween checks if a number is in between two other numbers
 func InBetween(i, min, max int) bool {
 	if (i >= min) && (i <= max) {
 		return true
@@ -86,6 +98,7 @@ func InBetween(i, min, max int) bool {
 	}
 }
 
+// ChunkBy splits a slice into chunks of a given size
 func ChunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
 	for chunkSize < len(items) {
 		items, chunks = items[chunkSize:], append(chunks, items[0:chunkSize:chunkSize])
@@ -93,6 +106,7 @@ func ChunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
 	return append(chunks, items)
 }
 
+// B64DecodeMsg decodes a base64 encoded string
 func B64DecodeMsg(b64Key string, offsetF ...int) ([]byte, error) {
 	offset := 7
 	if len(offsetF) > 0 {

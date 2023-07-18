@@ -1,3 +1,8 @@
+// Description: AWS utils
+// Author: Pixie79
+// ============================================================================
+// package aws
+
 package aws
 
 import (
@@ -12,6 +17,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+// GetSource retrieves the source from the event source
 func GetSource(ctx context.Context, eventSource string) context.Context {
 	r, _ := regexp.Compile(`^(aws.partner/)([a-zA-Z]*)`)
 	sourceResult := r.FindStringSubmatch(eventSource)
@@ -25,6 +31,7 @@ func GetSource(ctx context.Context, eventSource string) context.Context {
 	return ctx
 }
 
+// GetTopic retrieves the topic from the event detail type
 func GetTopic(ctx context.Context, detailType string) context.Context {
 	topic := fmt.Sprintf("%s-%s", ctx.Value(data_utils.SourceKey{}).(string),
 		strings.ReplaceAll(
@@ -34,6 +41,7 @@ func GetTopic(ctx context.Context, detailType string) context.Context {
 	return context.WithValue(ctx, data_utils.TopicKey{}, topic)
 }
 
+// GetPayload retrieves the payload from the event detail
 func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 	var (
 		kafkaRecords []*kgo.Record
@@ -42,12 +50,14 @@ func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 		source       = ctx.Value(data_utils.SourceKey{}).(string)
 	)
 
+	// If key is empty, use hostname as key
 	if len(key) < 1 {
 		keyValue = []byte(utils.Hostname)
 	} else {
 		keyValue = key
 	}
 	if source == "salesforce" {
+		// If source is salesforce, unmarshal the payload and use the payload as value
 		customStructure := &data_utils.SalesforceDetailEvent{}
 		_ = json.Unmarshal(detail, customStructure)
 		payloadEvent := &kgo.Record{
@@ -57,15 +67,18 @@ func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 		}
 		kafkaRecords = append(kafkaRecords, payloadEvent)
 	} else {
+		// If source is not salesforce, use the payload as is
 		payloadEvent := &kgo.Record{
 			Topic: topic,
 			Value: detail,
 		}
 		kafkaRecords = append(kafkaRecords, payloadEvent)
 	}
+	// Return the kafka records to be sent to kafka
 	return kafkaRecords
 }
 
+// CreateEvent creates a kafka record from the event
 func CreateEvent(ctx context.Context, event data_utils.CloudWatchEvent) ([]*kgo.Record, context.Context) {
 	ctx = GetSource(ctx, event.Source)
 	ctx = GetTopic(ctx, event.DetailType)

@@ -38,6 +38,7 @@ func TestGetTopic(t *testing.T) {
 	}
 }
 
+// TestGetPayload - Checks source and topicDetail, getting the correct payload for the source
 func TestGetPayload(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
@@ -68,6 +69,7 @@ func TestGetPayload(t *testing.T) {
 	}
 }
 
+// TestGetSource - Checks source and filters for the correct source name
 func TestGetSource(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
@@ -93,6 +95,7 @@ func TestGetSource(t *testing.T) {
 	}
 }
 
+// TestCreateEvent - Creates a sample event in the correct format
 func TestCreateEvent(t *testing.T) {
 	testArn := []string{"arn:aws:events:eu-west-2:123456789012:event-bus/123456789012-eu-west-2-testapp"}
 	detailPayload := json.RawMessage{}

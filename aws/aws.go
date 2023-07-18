@@ -1,3 +1,8 @@
+// Description: AWS utils
+// Author: Pixie79
+// ============================================================================
+// package aws
+
 package aws
 
 import (
@@ -14,6 +19,7 @@ import (
 	"github.com/pixie79/data-utils/utils"
 )
 
+// FetchCredentials retrieves credentials from AWS Secrets Manager
 func FetchCredentials(credentialsKey string) data_utils.CredentialsType {
 	credentialsString := GetSecretManagerValue(credentialsKey)
 	credentials := data_utils.CredentialsType{}
@@ -23,18 +29,21 @@ func FetchCredentials(credentialsKey string) data_utils.CredentialsType {
 	return credentials
 }
 
+// GetSecretManagerValue retrieves a secret from AWS Secrets Manager
 func GetSecretManagerValue(passwordKey string) string {
 	region := utils.GetEnv("AWS_REGION", "eu-west-1")
 	utils.Logger.Debug("creating AWS Session")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
+	// Create Secrets Manager service
 	smSvc := secretsmanager.New(sess, &aws.Config{
 		Region:     aws.String(region),
 		MaxRetries: aws.Int(3),
 		Endpoint:   aws.String(fmt.Sprintf("https://secretsmanager.%s.amazonaws.com", region)),
 	})
 
+	// Get the secret
 	resp, err := smSvc.GetSecretValue(&secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(passwordKey),
 	})
@@ -45,17 +54,21 @@ func GetSecretManagerValue(passwordKey string) string {
 	return result
 }
 
+// GetSsmParam retrieves a parameter from AWS SSM Parameter Store
 func GetSsmParam(parameterPath string) string {
 	region := utils.GetEnv("AWS_REGION", "eu-west-1")
 	utils.Logger.Debug("creating AWS Session")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
+	// Create SSM service
 	ssmSvc := ssm.New(sess, &aws.Config{
 		Region:     aws.String(region),
 		MaxRetries: aws.Int(3),
 		Endpoint:   aws.String(fmt.Sprintf("https://ssm.%s.amazonaws.com", region)),
 	})
+
+	// Get the parameter
 	param, err := ssmSvc.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(parameterPath),
 		WithDecryption: aws.Bool(true),
@@ -66,18 +79,20 @@ func GetSsmParam(parameterPath string) string {
 	return value
 }
 
+// CreateCloudwatchMetric creates a metric in AWS Cloudwatch
 func CreateCloudwatchMetric(metric []*cloudwatch.MetricDatum, namespace string) {
 	region := utils.GetEnv("AWS_REGION", "eu-west-1")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
+	// Create Cloudwatch service
 	cwmSvc := cloudwatch.New(sess, &aws.Config{
 		Region:              aws.String(region),
 		MaxRetries:          aws.Int(3),
 		Endpoint:            aws.String(fmt.Sprintf("https://events.%s.amazonaws.com", region)),
 		STSRegionalEndpoint: endpoints.RegionalSTSEndpoint,
 	})
-
+	// Create the cloudwatch metric
 	_, err = cwmSvc.PutMetricData(&cloudwatch.PutMetricDataInput{
 		Namespace:  aws.String(namespace),
 		MetricData: metric,

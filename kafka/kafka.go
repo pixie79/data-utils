@@ -1,3 +1,8 @@
+// Description: Kafka utils
+// Author: Pixie79
+// ============================================================================
+// package kafka
+
 package kafka
 
 import (
@@ -11,6 +16,7 @@ import (
 	"github.com/twmb/franz-go/pkg/sasl/scram"
 )
 
+// CreateConnectionAndSubmitRecords creates a connection to Kafka and submits records
 func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.Record, credentials data_utils.CredentialsType) *kgo.Client {
 	var (
 		opts          []kgo.Opt
@@ -47,6 +53,7 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 	return client
 }
 
+// SubmitRecords submits records to Kafka
 func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.Record) error {
 	var (
 		topic = ctx.Value(data_utils.TopicKey{}).(string)

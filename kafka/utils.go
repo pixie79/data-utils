@@ -1,3 +1,8 @@
+// Description: Kafka utils
+// Author: Pixie79
+// ============================================================================
+// package kafka
+
 package kafka
 
 import (
@@ -7,6 +12,7 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
+// ProduceMessages produces messages to Kafka
 func ProduceMessages(ctx context.Context, client *kgo.Client, record []*kgo.Record) error {
 	var (
 		errPromise kgo.FirstErrPromise
@@ -19,6 +25,7 @@ func ProduceMessages(ctx context.Context, client *kgo.Client, record []*kgo.Reco
 	return errPromise.Err()
 }
 
+// RollbackTransaction rolls back a transaction
 func RollbackTransaction(client *kgo.Client) error {
 	// Background context is used because cancelling either of these operations can result
 	// in buffered messages being added to the next transaction.

@@ -1,3 +1,8 @@
+// Description: Avro utils
+// Author: Pixie79
+// ============================================================================
+// package kafka
+
 package kafka
 
 import (
@@ -9,6 +14,7 @@ import (
 	"github.com/twmb/franz-go/pkg/sr"
 )
 
+// FetchSchema fetches the schema from the schema registry
 func FetchSchema(schemaId int) avro.Schema {
 	var url = "http://localhost:18081"
 	rcl, err := sr.NewClient(sr.URLs(url))
@@ -20,6 +26,7 @@ func FetchSchema(schemaId int) avro.Schema {
 	return kafkaSchema
 }
 
+// GetSchemaIdFromPayload returns the schema id from the payload
 func GetSchemaIdFromPayload(msg []byte) int {
 	schemaID := binary.BigEndian.Uint32(msg[1:5])
 	return int(schemaID)

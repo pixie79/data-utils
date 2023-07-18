@@ -1,3 +1,8 @@
+// Description: Prometheus utils to help parse prometheus metrics
+// Author: Pixie79
+// ============================================================================
+// package prometheus
+
 package prometheus
 
 import (
@@ -12,6 +17,7 @@ import (
 	"github.com/pixie79/data-utils/utils"
 )
 
+// SplitTags splits the tags from a Prometheus metric into a slice of tags
 func SplitTags(data string) []data_utils.TagsType {
 	var tags []data_utils.TagsType
 	sData := strings.Split(data, ",")
