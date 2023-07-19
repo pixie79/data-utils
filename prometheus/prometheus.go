@@ -32,8 +32,8 @@ func SplitTags(data string) []data_utils.TagsType {
 			}
 			tags = append(tags, tag)
 		}
-
 	}
+	tags = append(tags, additionalTags...) // Add additional tags
 
 	return tags
 

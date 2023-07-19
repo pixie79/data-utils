@@ -14,10 +14,11 @@ import (
 )
 
 var (
-	Logger      *slog.Logger    // Logger is the default logger
-	logLevel    string          // logLevel is the log level
-	Err         error           // Err is the default error
-	Hostname, _ = os.Hostname() // Hostname is the default hostname
+	Logger      *slog.Logger                   // Logger is the default logger
+	logLevel    string                         // logLevel is the log level
+	Err         error                          // Err is the default error
+	Hostname, _ = os.Hostname()                // Hostname is the default hostname
+	Environment = GetEnv("ENVIRONMENT", "dev") // Environment is the default environment
 )
 
 // init loads the .env file and sets the log level

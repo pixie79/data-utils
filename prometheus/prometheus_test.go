@@ -1,14 +1,19 @@
 package prometheus
 
-import "testing"
+import (
+	"fmt"
+	"github.com/pixie79/data-utils/utils"
+	"testing"
+)
 
 // TestSplitTags tests the SplitTags function
 func TestSplitTags(t *testing.T) {
 	data := `a="b",c="d",e="f"`
 	result := SplitTags(data)
 
-	if len(result) != 3 {
-		t.Errorf("expected 3 tags, got %d", len(result))
+	utils.Logger.Info(fmt.Sprintf("%+v", result))
+	if len(result) != 5 {
+		t.Errorf("expected 5 tags, got %d", len(result))
 	}
 
 	if result[0].Name != "a" || result[0].Value != "b" {

@@ -8,6 +8,7 @@ package prometheus
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/aws"
@@ -25,6 +26,7 @@ var (
 	awsSecretsManager     string                                          // awsSecretsManager is a flag to indicate whether we're using AWS Secrets Manager
 	reInitialSplit        = regexp.MustCompile(`(.+){(.+)}\s(\d+\.?\d*)`) // reInitialSplit is the regex to split the initial line of a Prometheus metric
 	reTagSplit            = regexp.MustCompile(`(\w+)="(.+)"`)            // reTagSplit is the regex to split the tags of a Prometheus metric
+	additionalTags        []data_utils.TagsType
 )
 
 // init is called before main(), sets up the environment
@@ -52,5 +54,16 @@ func init() {
 			Password: utils.GetEnv("METRICS_PASSWORD", ""),
 		}
 
+	}
+
+	additionalTags = []data_utils.TagsType{
+		{
+			Name:  "environment",
+			Value: utils.Environment,
+		},
+		{
+			Name:  "metrics_server",
+			Value: strings.Split(metricsServer, ":")[0],
+		},
 	}
 }
