@@ -15,7 +15,7 @@ import (
 
 var (
 	Logger      *slog.Logger                   // Logger is the default logger
-	logLevel    string                         // logLevel is the log level
+	LogLevel    string                         // logLevel is the log level
 	Err         error                          // Err is the default error
 	Hostname, _ = os.Hostname()                // Hostname is the default hostname
 	Environment = GetEnv("ENVIRONMENT", "dev") // Environment is the default environment
@@ -27,19 +27,19 @@ func init() {
 	if err := godotenv.Load(); err != nil {
 		slog.Debug("No .env file found")
 	}
-	logLevel = GetEnv("LOG_LEVEL", "INFO")
+	LogLevel = GetEnv("LOG_LEVEL", "INFO")
 	Logger = initLog()
 }
 
 // initLog initializes the logger
 func initLog() *slog.Logger {
-	switch logLevel {
+	switch LogLevel {
 	case "DEBUG":
 		opts := &slog.HandlerOptions{
 			Level: slog.LevelDebug,
 		}
 		logger := slog.New(slog.NewJSONHandler(os.Stdout, opts))
-		logger.Info(fmt.Sprintf("Loglevel set to: %s", logLevel))
+		logger.Info(fmt.Sprintf("Loglevel set to: %s", LogLevel))
 		slog.SetDefault(logger)
 		return logger
 	default:
@@ -47,7 +47,7 @@ func initLog() *slog.Logger {
 			Level: slog.LevelInfo,
 		}
 		logger := slog.New(slog.NewJSONHandler(os.Stdout, opts))
-		logger.Info(fmt.Sprintf("Loglevel set to: %s", logLevel))
+		logger.Info(fmt.Sprintf("Loglevel set to: %s", LogLevel))
 		slog.SetDefault(logger)
 		return logger
 	}
