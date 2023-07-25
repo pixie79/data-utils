@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/pixie79/data-utils"
@@ -12,14 +13,8 @@ import (
 )
 
 var (
-	sampleKafkaRecords []*kgo.Record
-	sampleKafkaRecord  = kgo.Record{Topic: "test", Value: json.RawMessage(`{"foo":"bar"}`)}
-	timestamp          = events.SecondsEpochTime{Time: time.Now().UTC()}
+	timestamp = events.SecondsEpochTime{Time: time.Now().UTC()}
 )
-
-func init() {
-	sampleKafkaRecords = []*kgo.Record{&sampleKafkaRecord}
-}
 
 func getEvent(newItem json.RawMessage, oldItem json.RawMessage) data_utils.DynamoDBStreamEvent {
 
@@ -46,14 +41,14 @@ func getEvent(newItem json.RawMessage, oldItem json.RawMessage) data_utils.Dynam
 	}
 }
 
-func TestGetDynamoDbPayload(t *testing.T) {
+func TestDynamoDbCreateEvent(t *testing.T) {
 	newItem := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
 	oldItem := json.RawMessage(`{"email":"a@example.com", "state":"CA", "city":"San Francisco", "zipcode":"94105"}`)
-
+	ctx := context.Background()
 	event := getEvent(newItem, oldItem)
 
 	key := []byte("key")
-	actual := DynamoDbCreateEvent(event, key)
+	actual, ctx := DynamoDbCreateEvent(ctx, event, key)
 
 	// Prepare the expected value
 	expected := []*kgo.Record{
@@ -62,6 +57,9 @@ func TestGetDynamoDbPayload(t *testing.T) {
 			Value: utils.CreateBytes(event.Records[0]),
 			Key:   key,
 		},
+	}
+	if ctx.Value(data_utils.TopicKey{}).(string) != expected[0].Topic {
+		t.Errorf("Expected %v, got %v", expected[0].Topic, ctx.Value(data_utils.TopicKey{}).(string))
 	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Expected %v, got %v", expected, actual)

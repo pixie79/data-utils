@@ -6,8 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-cmp/cmp"
-	data_utils "github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -33,37 +32,6 @@ func TestGetCloudWatchTopic(t *testing.T) {
 			topic := ctx.Value(data_utils.TopicKey{}).(string)
 			if topic != tt.want {
 				t.Errorf("got %s, want %s", topic, tt.want)
-			}
-		})
-	}
-}
-
-// TestGetCloudWatchPayload - Checks source and topicDetail, getting the correct payload for the source
-func TestGetCloudWatchPayload(t *testing.T) {
-	// Defining the columns of the table
-	var tests = []struct {
-		name   string
-		source string
-		topic  string
-		detail []byte
-		want   *kgo.Record
-	}{
-		// the table itself
-		{"Simple source", "topicname", "topicname", json.RawMessage(`{"foo":"bar"}`), &kgo.Record{Topic: "topicname", Value: json.RawMessage(`{"foo":"bar"}`)}},
-		{"Salesforce source", "salesforce", "salesforce", json.RawMessage(`{"Payload": {"foo":"bar"}}`), &kgo.Record{Topic: "salesforce", Value: json.RawMessage(`{"foo":"bar"}`)}},
-	}
-	// The execution loop
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ctx := context.Background()
-			ctx = context.WithValue(ctx, data_utils.SourceKey{}, tt.source)
-			ctx = context.WithValue(ctx, data_utils.TopicKey{}, tt.topic)
-			result := GetCloudWatchPayload(ctx, tt.detail, nil)
-			if cmp.Equal(result[0].Topic, tt.want.Topic) == false {
-				t.Errorf("got %+v, want %+v", result[0], tt.want)
-			}
-			if cmp.Equal(result[0].Value, tt.want.Value) == false {
-				t.Errorf("got %+v, want %+v", result[0].Value, tt.want.Value)
 			}
 		})
 	}
@@ -98,7 +66,7 @@ func TestGetCloudWatchSource(t *testing.T) {
 // TestCloudWatchCreateEvent - Creates a sample event in the correct format
 func TestCloudWatchCreateEvent(t *testing.T) {
 	testArn := []string{"arn:aws:events:eu-west-2:123456789012:event-bus/123456789012-eu-west-2-testapp"}
-	detailPayload := json.RawMessage{}
+	detailPayload := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
 	event1 := data_utils.CloudWatchEvent{
 		Version:    "0",
 		ID:         "972723a0-69b8-4ddf-8729-5b0b4fb4af15",
@@ -143,7 +111,7 @@ func TestCloudWatchCreateEvent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			result, ctx := CloudWatchCreateEvent(ctx, tt.event)
+			result, ctx := CloudWatchCreateEvent(ctx, tt.event, []byte(""))
 			if result[0].Topic != tt.want.Topic {
 				t.Errorf("got: %+v, want: %+v, context: %+v", result[0], tt.want, ctx)
 			}

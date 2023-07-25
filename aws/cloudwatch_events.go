@@ -41,15 +41,21 @@ func GetCloudWatchTopic(ctx context.Context, detailType string) context.Context 
 	return context.WithValue(ctx, data_utils.TopicKey{}, topic)
 }
 
-// GetCloudWatchPayload retrieves the payload from the event detail
-func GetCloudWatchPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
+// CloudWatchCreateEvent retrieves the payload from the event detail
+func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
+	utils.Logger.Info(fmt.Sprintf("Running CloudWatchCreateEvent %+v", event))
+	ctx = GetCloudWatchSource(ctx, event.Source)
+	ctx = GetCloudWatchTopic(ctx, event.DetailType)
+
 	var (
 		kafkaRecords []*kgo.Record
 		keyValue     []byte
-		topic        = ctx.Value(data_utils.TopicKey{}).(string)
+		detail       = event.Detail
 		source       = ctx.Value(data_utils.SourceKey{}).(string)
+		topic        = ctx.Value(data_utils.TopicKey{}).(string)
 	)
 
+	utils.Logger.Info(fmt.Sprintf("Running topic: %s, source: %s", topic, source))
 	// If key is empty, use hostname as key
 	if len(key) < 1 {
 		keyValue = []byte(utils.Hostname)
@@ -76,13 +82,5 @@ func GetCloudWatchPayload(ctx context.Context, detail []byte, key []byte) []*kgo
 		kafkaRecords = append(kafkaRecords, payloadEvent)
 	}
 	// Return the kafka records to be sent to kafka
-	return kafkaRecords
-}
-
-// CloudWatchCreateEvent creates a kafka record from the event
-func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent) ([]*kgo.Record, context.Context) {
-	ctx = GetCloudWatchSource(ctx, event.Source)
-	ctx = GetCloudWatchTopic(ctx, event.DetailType)
-	kafkaRecords := GetCloudWatchPayload(ctx, event.Detail, nil)
 	return kafkaRecords, ctx
 }

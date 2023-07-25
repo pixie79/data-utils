@@ -6,6 +6,7 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -30,7 +31,7 @@ func GetDynamoDBSource(eventSourceArn string) string {
 }
 
 // DynamoDbCreateEvent retrieves the event
-func DynamoDbCreateEvent(event data_utils.DynamoDBStreamEvent, key []byte) []*kgo.Record {
+func DynamoDbCreateEvent(ctx context.Context, event data_utils.DynamoDBStreamEvent, key []byte) ([]*kgo.Record, context.Context) {
 	var (
 		kafkaRecords []*kgo.Record
 		keyValue     []byte
@@ -55,5 +56,5 @@ func DynamoDbCreateEvent(event data_utils.DynamoDBStreamEvent, key []byte) []*kg
 	}
 
 	// Return the kafka records to be sent to kafka
-	return kafkaRecords
+	return kafkaRecords, context.WithValue(ctx, data_utils.TopicKey{}, topic)
 }
