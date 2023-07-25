@@ -4,7 +4,9 @@ go 1.20
 
 require (
 	github.com/DataDog/datadog-api-client-go/v2 v2.14.0
+	github.com/aws/aws-lambda-go v1.41.0
 	github.com/aws/aws-sdk-go v1.44.300
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.20.1
 	github.com/google/go-cmp v0.5.8
 	github.com/hamba/avro/v2 v2.13.0
 	github.com/joho/godotenv v1.5.1
@@ -15,6 +17,7 @@ require (
 
 require (
 	github.com/DataDog/zstd v1.5.2 // indirect
+	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

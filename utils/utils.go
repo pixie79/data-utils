@@ -7,7 +7,9 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/base64"
+	"encoding/gob"
 	"fmt"
 	"io"
 	"net/http"
@@ -162,4 +164,17 @@ func DifferenceInSlices(l1, l2 []string) ([]string, []string, []string) {
 		}
 	}
 	return missingL1, missingL2, common
+}
+
+// CreateBytes creates a byte array from any data
+func CreateBytes(data any) []byte {
+	var envBuffer bytes.Buffer
+	encData := gob.NewEncoder(&envBuffer)
+	err := encData.Encode(data)
+	MaybeDie(err, "encoding to bytes failed")
+	return envBuffer.Bytes()
+}
+
+func TimePtr(t time.Time) time.Time {
+	return t
 }

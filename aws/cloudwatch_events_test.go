@@ -11,8 +11,8 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-// TestGetTopic - Checks source and topicDetail, switches underscore for hyphen, multiple hyphens for single and lowercase
-func TestGetTopic(t *testing.T) {
+// TestGetCloudWatchTopic - Checks source and topicDetail, switches underscore for hyphen, multiple hyphens for single and lowercase
+func TestGetCloudWatchTopic(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
 		name       string
@@ -29,7 +29,7 @@ func TestGetTopic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			ctx = context.WithValue(ctx, data_utils.SourceKey{}, tt.source)
-			ctx = GetTopic(ctx, tt.detailType)
+			ctx = GetCloudWatchTopic(ctx, tt.detailType)
 			topic := ctx.Value(data_utils.TopicKey{}).(string)
 			if topic != tt.want {
 				t.Errorf("got %s, want %s", topic, tt.want)
@@ -38,8 +38,8 @@ func TestGetTopic(t *testing.T) {
 	}
 }
 
-// TestGetPayload - Checks source and topicDetail, getting the correct payload for the source
-func TestGetPayload(t *testing.T) {
+// TestGetCloudWatchPayload - Checks source and topicDetail, getting the correct payload for the source
+func TestGetCloudWatchPayload(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
 		name   string
@@ -58,7 +58,7 @@ func TestGetPayload(t *testing.T) {
 			ctx := context.Background()
 			ctx = context.WithValue(ctx, data_utils.SourceKey{}, tt.source)
 			ctx = context.WithValue(ctx, data_utils.TopicKey{}, tt.topic)
-			result := GetPayload(ctx, tt.detail, nil)
+			result := GetCloudWatchPayload(ctx, tt.detail, nil)
 			if cmp.Equal(result[0].Topic, tt.want.Topic) == false {
 				t.Errorf("got %+v, want %+v", result[0], tt.want)
 			}
@@ -69,8 +69,8 @@ func TestGetPayload(t *testing.T) {
 	}
 }
 
-// TestGetSource - Checks source and filters for the correct source name
-func TestGetSource(t *testing.T) {
+// TestGetCloudWatchSource - Checks source and filters for the correct source name
+func TestGetCloudWatchSource(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
 		name   string
@@ -86,7 +86,7 @@ func TestGetSource(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			ctx = GetSource(ctx, tt.source)
+			ctx = GetCloudWatchSource(ctx, tt.source)
 			source := ctx.Value(data_utils.SourceKey{}).(string)
 			if source != tt.want {
 				t.Errorf("got %s, want %s", source, tt.want)
@@ -95,8 +95,8 @@ func TestGetSource(t *testing.T) {
 	}
 }
 
-// TestCreateEvent - Creates a sample event in the correct format
-func TestCreateEvent(t *testing.T) {
+// TestCloudWatchCreateEvent - Creates a sample event in the correct format
+func TestCloudWatchCreateEvent(t *testing.T) {
 	testArn := []string{"arn:aws:events:eu-west-2:123456789012:event-bus/123456789012-eu-west-2-testapp"}
 	detailPayload := json.RawMessage{}
 	event1 := data_utils.CloudWatchEvent{
@@ -143,7 +143,7 @@ func TestCreateEvent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			result, ctx := CreateEvent(ctx, tt.event)
+			result, ctx := CloudWatchCreateEvent(ctx, tt.event)
 			if result[0].Topic != tt.want.Topic {
 				t.Errorf("got: %+v, want: %+v, context: %+v", result[0], tt.want, ctx)
 			}

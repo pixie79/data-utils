@@ -17,8 +17,8 @@ import (
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-// GetSource retrieves the source from the event source
-func GetSource(ctx context.Context, eventSource string) context.Context {
+// GetCloudWatchSource retrieves the source from the event source
+func GetCloudWatchSource(ctx context.Context, eventSource string) context.Context {
 	r, _ := regexp.Compile(`^(aws.partner/)([a-zA-Z]*)`)
 	sourceResult := r.FindStringSubmatch(eventSource)
 	if len(sourceResult) >= 1 {
@@ -31,8 +31,8 @@ func GetSource(ctx context.Context, eventSource string) context.Context {
 	return ctx
 }
 
-// GetTopic retrieves the topic from the event detail type
-func GetTopic(ctx context.Context, detailType string) context.Context {
+// GetCloudWatchTopic retrieves the topic from the event detail type
+func GetCloudWatchTopic(ctx context.Context, detailType string) context.Context {
 	topic := fmt.Sprintf("%s-%s", ctx.Value(data_utils.SourceKey{}).(string),
 		strings.ReplaceAll(
 			strings.ReplaceAll(
@@ -41,8 +41,8 @@ func GetTopic(ctx context.Context, detailType string) context.Context {
 	return context.WithValue(ctx, data_utils.TopicKey{}, topic)
 }
 
-// GetPayload retrieves the payload from the event detail
-func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
+// GetCloudWatchPayload retrieves the payload from the event detail
+func GetCloudWatchPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 	var (
 		kafkaRecords []*kgo.Record
 		keyValue     []byte
@@ -71,6 +71,7 @@ func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 		payloadEvent := &kgo.Record{
 			Topic: topic,
 			Value: detail,
+			Key:   keyValue,
 		}
 		kafkaRecords = append(kafkaRecords, payloadEvent)
 	}
@@ -78,10 +79,10 @@ func GetPayload(ctx context.Context, detail []byte, key []byte) []*kgo.Record {
 	return kafkaRecords
 }
 
-// CreateEvent creates a kafka record from the event
-func CreateEvent(ctx context.Context, event data_utils.CloudWatchEvent) ([]*kgo.Record, context.Context) {
-	ctx = GetSource(ctx, event.Source)
-	ctx = GetTopic(ctx, event.DetailType)
-	kafkaRecords := GetPayload(ctx, event.Detail, nil)
+// CloudWatchCreateEvent creates a kafka record from the event
+func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent) ([]*kgo.Record, context.Context) {
+	ctx = GetCloudWatchSource(ctx, event.Source)
+	ctx = GetCloudWatchTopic(ctx, event.DetailType)
+	kafkaRecords := GetCloudWatchPayload(ctx, event.Detail, nil)
 	return kafkaRecords, ctx
 }

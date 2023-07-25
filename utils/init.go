@@ -19,6 +19,7 @@ var (
 	Err         error                          // Err is the default error
 	Hostname, _ = os.Hostname()                // Hostname is the default hostname
 	Environment = GetEnv("ENVIRONMENT", "dev") // Environment is the default environment
+	Prefix      = GetEnv("PREFIX", "data")     // Prefix is the default prefix
 )
 
 // init loads the .env file and sets the log level
