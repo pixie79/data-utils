@@ -9,7 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	data_utils "github.com/pixie79/data-utils/types"
+	"github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
 
@@ -22,9 +22,9 @@ func GetCloudWatchSource(ctx context.Context, eventSource string) context.Contex
 	r, _ := regexp.Compile(`^(aws.partner/)([a-zA-Z]*)`)
 	sourceResult := r.FindStringSubmatch(eventSource)
 	if len(sourceResult) >= 1 {
-		return context.WithValue(ctx, data_utils.SourceKey{}, strings.ToLower(sourceResult[2]))
+		return context.WithValue(ctx, types.SourceKey{}, strings.ToLower(sourceResult[2]))
 	} else if len(eventSource) > 0 {
-		return context.WithValue(ctx, data_utils.SourceKey{}, strings.ToLower(eventSource))
+		return context.WithValue(ctx, types.SourceKey{}, strings.ToLower(eventSource))
 	} else {
 		utils.Die(fmt.Errorf("source result empty"), "no source found")
 	}
@@ -33,16 +33,16 @@ func GetCloudWatchSource(ctx context.Context, eventSource string) context.Contex
 
 // GetCloudWatchTopic retrieves the topic from the event detail type
 func GetCloudWatchTopic(ctx context.Context, detailType string) context.Context {
-	topic := fmt.Sprintf("%s-%s", ctx.Value(data_utils.SourceKey{}).(string),
+	topic := fmt.Sprintf("%s-%s", ctx.Value(types.SourceKey{}).(string),
 		strings.ReplaceAll(
 			strings.ReplaceAll(
 				strings.ToLower(detailType), "_", "-"),
 			"--", "-"))
-	return context.WithValue(ctx, data_utils.TopicKey{}, topic)
+	return context.WithValue(ctx, types.TopicKey{}, topic)
 }
 
 // CloudWatchCreateEvent retrieves the payload from the event detail
-func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
+func CloudWatchCreateEvent(ctx context.Context, event types.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
 	utils.Logger.Info(fmt.Sprintf("Running CloudWatchCreateEvent %+v", event))
 	ctx = GetCloudWatchSource(ctx, event.Source)
 	ctx = GetCloudWatchTopic(ctx, event.DetailType)
@@ -51,8 +51,8 @@ func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent
 		kafkaRecords []*kgo.Record
 		keyValue     []byte
 		detail       = event.Detail
-		source       = ctx.Value(data_utils.SourceKey{}).(string)
-		topic        = ctx.Value(data_utils.TopicKey{}).(string)
+		source       = ctx.Value(types.SourceKey{}).(string)
+		topic        = ctx.Value(types.TopicKey{}).(string)
 	)
 
 	utils.Logger.Info(fmt.Sprintf("Running topic: %s, source: %s", topic, source))
@@ -64,7 +64,7 @@ func CloudWatchCreateEvent(ctx context.Context, event data_utils.CloudWatchEvent
 	}
 	if source == "salesforce" {
 		// If source is salesforce, unmarshal the payload and use the payload as value
-		customStructure := &data_utils.SalesforceDetailEvent{}
+		customStructure := &types.SalesforceDetailEvent{}
 		_ = json.Unmarshal(detail, customStructure)
 		payloadEvent := &kgo.Record{
 			Topic: topic,

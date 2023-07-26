@@ -7,7 +7,7 @@ package prometheus
 
 import (
 	"fmt"
-	data_utils "github.com/pixie79/data-utils/types"
+	"github.com/pixie79/data-utils/types"
 	"strconv"
 	"strings"
 	"time"
@@ -18,15 +18,15 @@ import (
 )
 
 // SplitTags splits the tags from a Prometheus metric into a slice of tags
-func SplitTags(data string) []data_utils.TagsType {
-	var tags []data_utils.TagsType
+func SplitTags(data string) []types.TagsType {
+	var tags []types.TagsType
 	sData := strings.Split(data, ",")
 
 	for _, tagsData := range sData {
 		tagsSplit := reTagSplit.FindAllSubmatch([]byte(tagsData), -1)
 
 		for _, v := range tagsSplit {
-			tag := data_utils.TagsType{
+			tag := types.TagsType{
 				Name:  string(v[1]),
 				Value: string(v[2]),
 			}

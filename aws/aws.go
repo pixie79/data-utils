@@ -8,7 +8,7 @@ package aws
 import (
 	"encoding/json"
 	"fmt"
-	data_utils "github.com/pixie79/data-utils/types"
+	"github.com/pixie79/data-utils/types"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
@@ -20,9 +20,9 @@ import (
 )
 
 // FetchCredentials retrieves credentials from AWS Secrets Manager
-func FetchCredentials(credentialsKey string) data_utils.CredentialsType {
+func FetchCredentials(credentialsKey string) types.CredentialsType {
 	credentialsString := GetSecretManagerValue(credentialsKey)
-	credentials := data_utils.CredentialsType{}
+	credentials := types.CredentialsType{}
 	err := json.Unmarshal([]byte(credentialsString), &credentials)
 	utils.MaybeDie(err, "could not explode credentials")
 	utils.Logger.Debug(fmt.Sprintf("credentials retrieved: %s", credentialsKey))

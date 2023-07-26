@@ -7,7 +7,9 @@ package aws
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
@@ -57,4 +59,13 @@ func DynamoDbCreateEvent(ctx context.Context, event types.DynamoDBEvent, key []b
 
 	// Return the kafka records to be sent to kafka
 	return kafkaRecords, context.WithValue(ctx, types.TopicKey{}, topic)
+}
+
+func MarshalDynamoDBEventToLocal(event events.DynamoDBEvent) types.DynamoDBEvent {
+	holdingEvent, err := json.Marshal(event)
+	utils.MaybeDie(err, "unable to parse raw event: %+v")
+	newEvent := types.DynamoDBEvent{}
+	err = json.Unmarshal(holdingEvent, &newEvent)
+	utils.MaybeDie(err, "unable to load event: %+v")
+	return newEvent
 }

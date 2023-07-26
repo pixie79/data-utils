@@ -7,7 +7,7 @@ package prometheus
 
 import (
 	"fmt"
-	data_utils "github.com/pixie79/data-utils/types"
+	"github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
 
@@ -21,12 +21,12 @@ var (
 	metricsProtocol       string                                          // metricsProtocol is the protocol to use to access the Prometheus metrics endpoint
 	metricsUrlPath        string                                          // metricsUrlPath is the path to the Prometheus metrics endpoint
 	MetricsUrl            string                                          // MetricsUrl is the URL to the Prometheus metrics endpoint
-	MetricsCredentials    data_utils.CredentialsType                      // MetricsCredentials is the credentials to access the Prometheus metrics endpoint
+	MetricsCredentials    types.CredentialsType                           // MetricsCredentials is the credentials to access the Prometheus metrics endpoint
 	metricsCredentialsKey string                                          // metricsCredentialsKey is the key to use to fetch the credentials from AWS Secrets Manager
 	awsSecretsManager     string                                          // awsSecretsManager is a flag to indicate whether we're using AWS Secrets Manager
 	reInitialSplit        = regexp.MustCompile(`(.+){(.+)}\s(\d+\.?\d*)`) // reInitialSplit is the regex to split the initial line of a Prometheus metric
 	reTagSplit            = regexp.MustCompile(`(\w+)="(.+)"`)            // reTagSplit is the regex to split the tags of a Prometheus metric
-	additionalTags        []data_utils.TagsType
+	additionalTags        []types.TagsType
 )
 
 // init is called before main(), sets up the environment
@@ -49,14 +49,14 @@ func init() {
 		MetricsCredentials = aws.FetchCredentials(metricsCredentialsKey)
 	} else {
 		// Otherwise, use the credentials from the environment
-		MetricsCredentials = data_utils.CredentialsType{
+		MetricsCredentials = types.CredentialsType{
 			Username: utils.GetEnv("METRICS_USERNAME", ""),
 			Password: utils.GetEnv("METRICS_PASSWORD", ""),
 		}
 
 	}
 
-	additionalTags = []data_utils.TagsType{
+	additionalTags = []types.TagsType{
 		{
 			Name:  "environment",
 			Value: utils.Environment,

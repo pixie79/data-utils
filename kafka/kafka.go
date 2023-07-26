@@ -9,7 +9,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	data_utils "github.com/pixie79/data-utils/types"
+	"github.com/pixie79/data-utils/types"
 
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -17,11 +17,11 @@ import (
 )
 
 // CreateConnectionAndSubmitRecords creates a connection to Kafka and submits records
-func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.Record, credentials data_utils.CredentialsType) *kgo.Client {
+func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.Record, credentials types.CredentialsType) *kgo.Client {
 	var (
 		opts          []kgo.Opt
 		transactionId = fmt.Sprintf("eventbridge-%s", utils.Hostname)
-		topic         = ctx.Value(data_utils.TopicKey{}).(string)
+		topic         = ctx.Value(types.TopicKey{}).(string)
 	)
 	// Set up the kgo Client, which handles all the broker communication
 	// and underlies any producer/consumer actions.
@@ -56,7 +56,7 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 // SubmitRecords submits records to Kafka
 func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.Record) error {
 	var (
-		topic = ctx.Value(data_utils.TopicKey{}).(string)
+		topic = ctx.Value(types.TopicKey{}).(string)
 	)
 	// Start the transaction so that we can start buffering records.
 	if err := client.BeginTransaction(); err != nil {
