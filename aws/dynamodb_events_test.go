@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils/types"
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"reflect"
@@ -16,17 +16,17 @@ var (
 	timestamp = events.SecondsEpochTime{Time: time.Now().UTC()}
 )
 
-func getEvent(newItem json.RawMessage, oldItem json.RawMessage) data_utils.DynamoDBStreamEvent {
+func getEvent(newItem json.RawMessage, oldItem json.RawMessage) types.DynamoDBEvent {
 
-	return data_utils.DynamoDBStreamEvent{
-		Records: []data_utils.DynamoDBStreamRecord{
+	return types.DynamoDBEvent{
+		Records: []types.DynamoDBEventRecord{
 			{
 				AWSRegion:    "us-west-2",
 				EventName:    "INSERT",
 				EventSource:  "aws:dynamodb",
 				EventID:      "sampleEventId",
 				EventVersion: "1.1",
-				Change: data_utils.DynamoDBStreamRecordChange{
+				Change: types.DynamoDBStreamRecordChange{
 					ApproximateCreationDateTime: timestamp,
 					Keys:                        nil,
 					NewImage:                    newItem,
@@ -58,8 +58,8 @@ func TestDynamoDbCreateEvent(t *testing.T) {
 			Key:   key,
 		},
 	}
-	if ctx.Value(data_utils.TopicKey{}).(string) != expected[0].Topic {
-		t.Errorf("Expected %v, got %v", expected[0].Topic, ctx.Value(data_utils.TopicKey{}).(string))
+	if ctx.Value(types.TopicKey{}).(string) != expected[0].Topic {
+		t.Errorf("Expected %v, got %v", expected[0].Topic, ctx.Value(types.TopicKey{}).(string))
 	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Errorf("Expected %v, got %v", expected, actual)

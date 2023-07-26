@@ -7,13 +7,13 @@ package prometheus
 
 import (
 	"fmt"
+	data_utils "github.com/pixie79/data-utils/types"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
-	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/utils"
 )
 

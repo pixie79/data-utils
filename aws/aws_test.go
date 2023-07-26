@@ -1,7 +1,7 @@
 package aws
 
 import (
-	"github.com/pixie79/data-utils"
+	"github.com/pixie79/data-utils/types"
 	"reflect"
 	"testing"
 )
@@ -13,7 +13,7 @@ func TestFetchCredentials(t *testing.T) {
 	var tests []struct {
 		name string
 		args args
-		want data_utils.CredentialsType
+		want types.CredentialsType
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

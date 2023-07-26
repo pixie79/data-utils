@@ -3,10 +3,10 @@ package aws
 import (
 	"context"
 	"encoding/json"
+	"github.com/pixie79/data-utils/types"
 	"testing"
 	"time"
 
-	"github.com/pixie79/data-utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -27,9 +27,9 @@ func TestGetCloudWatchTopic(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			ctx = context.WithValue(ctx, data_utils.SourceKey{}, tt.source)
+			ctx = context.WithValue(ctx, types.SourceKey{}, tt.source)
 			ctx = GetCloudWatchTopic(ctx, tt.detailType)
-			topic := ctx.Value(data_utils.TopicKey{}).(string)
+			topic := ctx.Value(types.TopicKey{}).(string)
 			if topic != tt.want {
 				t.Errorf("got %s, want %s", topic, tt.want)
 			}
@@ -55,7 +55,7 @@ func TestGetCloudWatchSource(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
 			ctx = GetCloudWatchSource(ctx, tt.source)
-			source := ctx.Value(data_utils.SourceKey{}).(string)
+			source := ctx.Value(types.SourceKey{}).(string)
 			if source != tt.want {
 				t.Errorf("got %s, want %s", source, tt.want)
 			}
@@ -67,7 +67,7 @@ func TestGetCloudWatchSource(t *testing.T) {
 func TestCloudWatchCreateEvent(t *testing.T) {
 	testArn := []string{"arn:aws:events:eu-west-2:123456789012:event-bus/123456789012-eu-west-2-testapp"}
 	detailPayload := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
-	event1 := data_utils.CloudWatchEvent{
+	event1 := types.CloudWatchEvent{
 		Version:    "0",
 		ID:         "972723a0-69b8-4ddf-8729-5b0b4fb4af15",
 		DetailType: "mobile",
@@ -82,7 +82,7 @@ func TestCloudWatchCreateEvent(t *testing.T) {
 		Topic: "testapp-mobile",
 		Value: json.RawMessage{},
 	}
-	event2 := data_utils.CloudWatchEvent{
+	event2 := types.CloudWatchEvent{
 		Version:    "0",
 		ID:         "972723a0-69b8-4ddf-8729-5b0b4fb4af15",
 		DetailType: "CaseChangeEvent",
@@ -101,7 +101,7 @@ func TestCloudWatchCreateEvent(t *testing.T) {
 	// Defining the columns of the table
 	var tests = []struct {
 		name  string
-		event data_utils.CloudWatchEvent
+		event types.CloudWatchEvent
 		want  kgo.Record
 	}{
 		// the table itself

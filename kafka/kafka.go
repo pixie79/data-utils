@@ -9,8 +9,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	data_utils "github.com/pixie79/data-utils/types"
 
-	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl/scram"

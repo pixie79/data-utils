@@ -9,10 +9,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	data_utils "github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
 
-	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )

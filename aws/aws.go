@@ -8,6 +8,7 @@ package aws
 import (
 	"encoding/json"
 	"fmt"
+	data_utils "github.com/pixie79/data-utils/types"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
@@ -15,7 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	data_utils "github.com/pixie79/data-utils"
 	"github.com/pixie79/data-utils/utils"
 )
 
