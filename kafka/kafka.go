@@ -21,7 +21,6 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 	var (
 		opts          []kgo.Opt
 		transactionId = fmt.Sprintf("eventbridge-%s", utils.Hostname)
-		topic         = ctx.Value(types.TopicKey{}).(string)
 	)
 	// Set up the kgo Client, which handles all the broker communication
 	// and underlies any producer/consumer actions.
@@ -30,7 +29,6 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 	opts = append(opts,
 		kgo.SeedBrokers(seeds...),
 		kgo.TransactionalID(transactionId),
-		kgo.DefaultProduceTopic(topic),
 		kgo.RecordPartitioner(kgo.RoundRobinPartitioner()),
 		kgo.RecordRetries(4),
 		kgo.RequiredAcks(kgo.AllISRAcks()),
@@ -55,9 +53,6 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 
 // SubmitRecords submits records to Kafka
 func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.Record) error {
-	var (
-		topic = ctx.Value(types.TopicKey{}).(string)
-	)
 	// Start the transaction so that we can start buffering records.
 	if err := client.BeginTransaction(); err != nil {
 		return fmt.Errorf("error beginning transaction: %v", err)
@@ -77,7 +72,7 @@ func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 
-	utils.Logger.Info(fmt.Sprintf("kafka topic: %s, records produced %d", topic, len(kafkaRecords)))
+	utils.Logger.Info(fmt.Sprintf("kafka Records produced %d", len(kafkaRecords)))
 
 	//TODO Update Metric production
 	//ProduceMetric(topic, len(kafkaRecords))
