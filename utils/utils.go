@@ -178,3 +178,13 @@ func CreateBytes(data any) []byte {
 func TimePtr(t time.Time) time.Time {
 	return t
 }
+
+// CreateKey creates a key from a byte array
+func CreateKey(key []byte) []byte {
+	// If key is empty, use hostname as key
+	if len(key) < 1 {
+		return []byte(Hostname)
+	} else {
+		return key
+	}
+}

@@ -3,4 +3,4 @@
 // Distributed under the terms of the MIT License.
 
 // Package data_utils contains a useful reusable snippets of GO code to save reinventing the wheel
-package data_utils
+package main

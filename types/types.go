@@ -16,3 +16,8 @@ type TagsType struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+type LambdaProxyResponse struct {
+	Body       string `json:"body"`
+	StatusCode int    `json:"statusCode"`
+}

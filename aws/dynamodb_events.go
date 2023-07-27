@@ -32,21 +32,14 @@ func GetDynamoDBSource(eventSourceArn string) string {
 	return ""
 }
 
-// DynamoDbCreateEvent retrieves the event
-func DynamoDbCreateEvent(ctx context.Context, event types.DynamoDBEvent, key []byte) ([]*kgo.Record, context.Context) {
+// DynamoDbCreateKafkaEvent retrieves the event
+func DynamoDbCreateKafkaEvent(ctx context.Context, event types.DynamoDBEvent, key []byte) ([]*kgo.Record, context.Context) {
 	var (
 		kafkaRecords []*kgo.Record
-		keyValue     []byte
+		keyValue     = utils.CreateKey(key)
 		source       = GetDynamoDBSource(event.Records[0].EventSourceArn)
 		topic        = strings.ToLower(utils.Prefix) + `-dynamodb-` + strings.ToLower(source)
 	)
-
-	// If key is empty, use hostname as key
-	if len(key) < 1 {
-		keyValue = []byte(utils.Hostname)
-	} else {
-		keyValue = key
-	}
 
 	for _, v := range event.Records {
 		payloadEvent := &kgo.Record{

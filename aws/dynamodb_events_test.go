@@ -41,14 +41,14 @@ func getEvent(newItem json.RawMessage, oldItem json.RawMessage) types.DynamoDBEv
 	}
 }
 
-func TestDynamoDbCreateEvent(t *testing.T) {
+func TestDynamoDbCreateKafkaEvent(t *testing.T) {
 	newItem := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
 	oldItem := json.RawMessage(`{"email":"a@example.com", "state":"CA", "city":"San Francisco", "zipcode":"94105"}`)
 	ctx := context.Background()
 	event := getEvent(newItem, oldItem)
 
 	key := []byte("key")
-	actual, ctx := DynamoDbCreateEvent(ctx, event, key)
+	actual, ctx := DynamoDbCreateKafkaEvent(ctx, event, key)
 
 	// Prepare the expected value
 	expected := []*kgo.Record{

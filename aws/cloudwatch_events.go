@@ -41,27 +41,21 @@ func GetCloudWatchTopic(ctx context.Context, detailType string) context.Context 
 	return context.WithValue(ctx, types.TopicKey{}, topic)
 }
 
-// CloudWatchCreateEvent retrieves the payload from the event detail
-func CloudWatchCreateEvent(ctx context.Context, event types.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
-	utils.Logger.Info(fmt.Sprintf("Running CloudWatchCreateEvent %+v", event))
+// CloudWatchCreateKafkaEvent retrieves the payload from the event detail
+func CloudWatchCreateKafkaEvent(ctx context.Context, event types.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
+	utils.Logger.Info(fmt.Sprintf("Running CloudWatchCreateKafkaEvent %+v", event))
 	ctx = GetCloudWatchSource(ctx, event.Source)
 	ctx = GetCloudWatchTopic(ctx, event.DetailType)
 
 	var (
 		kafkaRecords []*kgo.Record
-		keyValue     []byte
+		keyValue     = utils.CreateKey(key)
 		detail       = event.Detail
 		source       = ctx.Value(types.SourceKey{}).(string)
 		topic        = ctx.Value(types.TopicKey{}).(string)
 	)
 
 	utils.Logger.Info(fmt.Sprintf("Running topic: %s, source: %s", topic, source))
-	// If key is empty, use hostname as key
-	if len(key) < 1 {
-		keyValue = []byte(utils.Hostname)
-	} else {
-		keyValue = key
-	}
 	if source == "salesforce" {
 		// If source is salesforce, unmarshal the payload and use the payload as value
 		customStructure := &types.SalesforceDetailEvent{}

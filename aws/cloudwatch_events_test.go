@@ -63,8 +63,8 @@ func TestGetCloudWatchSource(t *testing.T) {
 	}
 }
 
-// TestCloudWatchCreateEvent - Creates a sample event in the correct format
-func TestCloudWatchCreateEvent(t *testing.T) {
+// TestCloudWatchCreateKafkaEvent - Creates a sample event in the correct format
+func TestCloudWatchCreateKafkaEvent(t *testing.T) {
 	testArn := []string{"arn:aws:events:eu-west-2:123456789012:event-bus/123456789012-eu-west-2-testapp"}
 	detailPayload := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
 	event1 := types.CloudWatchEvent{
@@ -111,7 +111,7 @@ func TestCloudWatchCreateEvent(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			result, ctx := CloudWatchCreateEvent(ctx, tt.event, []byte(""))
+			result, ctx := CloudWatchCreateKafkaEvent(ctx, tt.event, []byte(""))
 			if result[0].Topic != tt.want.Topic {
 				t.Errorf("got: %+v, want: %+v, context: %+v", result[0], tt.want, ctx)
 			}
