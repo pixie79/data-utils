@@ -14,7 +14,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		kafkaRecords []*kgo.Record
 		keyValue     = utils.CreateKey(key)
 		source       string
-		topic        = strings.ToLower(utils.Prefix) + `-dynamodb-` + strings.ToLower(source)
+		topic        string
 	)
 
 	if _, found := event.PathParameters["proxy"]; found {
@@ -23,6 +23,9 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		utils.MaybeDie(fmt.Errorf("no source found"), "api gw proxy path parameter not found")
 	}
 
+	utils.Logger.Debug(fmt.Sprintf("Source is: %s", source))
+	topic = strings.ToLower(source)
+	utils.Logger.Debug(fmt.Sprintf("Topic name: %s", topic))
 	// Basic payload as is
 	payloadEvent := &kgo.Record{
 		Topic: topic,
@@ -30,6 +33,8 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		Key:   keyValue,
 	}
 	kafkaRecords = append(kafkaRecords, payloadEvent)
+
+	utils.Logger.Debug(fmt.Sprintf("Kafka Payload: %+v", kafkaRecords))
 
 	// Return the kafka records to be sent to kafka
 	return kafkaRecords, ctx
