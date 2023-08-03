@@ -17,7 +17,7 @@ type DynamoDBUserIdentity struct {
 type DynamoDBEventRecord struct {
 	EventID        string                       `json:"eventID"`   // e.g. 1
 	EventName      string                       `json:"eventName"` // e.g. 1.1
-	Change         events.DynamoDBStreamRecord  `json:"dynamodb"`
+	Change         DynamoDBStreamRecord         `json:"dynamodb"`
 	AWSRegion      string                       `json:"awsRegion"`
 	EventSourceArn string                       `json:"eventSourceARN"` // e.g. arn:aws:dynamodb:us-east-1:123456789012:table/MyTableWithStream/stream/2019-03-01T22:00:00.000
 	EventSource    string                       `json:"eventSource"`

@@ -16,7 +16,7 @@ var (
 	timestamp = events.SecondsEpochTime{Time: time.Now().UTC()}
 )
 
-func getEvent(newItem json.RawMessage, oldItem json.RawMessage) types.DynamoDBEvent {
+func _getDynamoDbEvent(newItem json.RawMessage, oldItem json.RawMessage) types.DynamoDBEvent {
 
 	return types.DynamoDBEvent{
 		Records: []types.DynamoDBEventRecord{
@@ -26,7 +26,7 @@ func getEvent(newItem json.RawMessage, oldItem json.RawMessage) types.DynamoDBEv
 				EventSource:  "aws:dynamodb",
 				EventID:      "sampleEventId",
 				EventVersion: "1.1",
-				Change: types.DynamoDBStreamRecordChange{
+				Change: types.DynamoDBStreamRecord{
 					ApproximateCreationDateTime: timestamp,
 					Keys:                        nil,
 					NewImage:                    newItem,
@@ -45,7 +45,7 @@ func TestDynamoDbCreateKafkaEvent(t *testing.T) {
 	newItem := json.RawMessage(`{"email":"a@b.com", "state":"CA", "city":"San Francisco", "zipcode":"94107"}`)
 	oldItem := json.RawMessage(`{"email":"a@example.com", "state":"CA", "city":"San Francisco", "zipcode":"94105"}`)
 	ctx := context.Background()
-	event := getEvent(newItem, oldItem)
+	event := _getDynamoDbEvent(newItem, oldItem)
 
 	key := []byte("key")
 	actual, ctx := DynamoDbCreateKafkaEvent(ctx, event, key)
