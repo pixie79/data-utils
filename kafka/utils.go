@@ -6,6 +6,7 @@
 package kafka
 
 import (
+	"binary"
 	"context"
 	"fmt"
 
@@ -40,4 +41,18 @@ func RollbackTransaction(client *kgo.Client) error {
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 	return nil
+}
+
+func IntToBytes(n int) []byte {
+	byteArray := make([]byte, 4)
+	binary.BigEndian.PutUint32(byteArray, uint32(n))
+	return byteArray
+}
+
+func AddZeroToStart(byteArray []byte) []byte {
+	return append([]byte{0}, byteArray...)
+}
+
+func EncodedBuffer(i) []byte {
+	return addZeroToStart(intToBytes(i))
 }

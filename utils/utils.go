@@ -19,16 +19,15 @@ import (
 	"time"
 )
 
-// Die prints an error message and exits
-func Die(err error, msg string) {
-	Logger.Error(fmt.Sprintf("%+v: %+v", msg, err))
+
+func Die(msg string) {
+	logger.Error(msg)
 	os.Exit(1)
 }
 
-// MaybeDie prints an error message and exits if the error is not nil
 func MaybeDie(err error, msg string) {
 	if err != nil {
-		Die(err, msg)
+		die(fmt.Sprintf("%s: %+v", msg, err))
 	}
 }
 
@@ -108,25 +107,27 @@ func ChunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
 	return append(chunks, items)
 }
 
-// B64DecodeMsg decodes a base64 encoded string
+// B64DecodeMsg decodes a base64 encoded key and returns a subset of the key starting from the specified offset.
+//
+// Parameters:
+//   - b64Key: The base64 encoded key to be decoded.
+//   - offsetF: An optional integer representing the offset from which to start the subset of the key. If not provided, it defaults to 7.
+//
+// Returns:
+//   - []byte: The subset of the key starting from the specified offset.
+//   - error: An error if the decoding or subset operation fails.
 func B64DecodeMsg(b64Key string, offsetF ...int) ([]byte, error) {
 	offset := 7
 	if len(offsetF) > 0 {
 		offset = offsetF[0]
 	}
-	//logger.Debug(fmt.Sprintf("base64 Encoded String: %s", b64Key))
-	var key []byte
-	var err error
-	if len(b64Key)%4 != 0 {
-		key, err = base64.RawStdEncoding.DecodeString(b64Key)
-	} else {
-		key, err = base64.StdEncoding.DecodeString(b64Key)
-	}
+
+	key, err := base64.StdEncoding.DecodeString(b64Key)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
+
 	result := key[offset:]
-	//logger.Debug(fmt.Sprintf("base64 Decoded String: %s", result))
 	return result, nil
 }
 
