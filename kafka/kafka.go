@@ -10,26 +10,23 @@ import (
 	"crypto/tls"
 	"fmt"
 
-	"github.com/pixie79/data-utils/types"
-
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"github.com/twmb/franz-go/pkg/sasl/scram"
 )
 
 var (
-	transactionSeed = utils.RandomString(30)
+	transactionSeed = RandomString(30)
 )
 
 // CreateConnectionAndSubmitRecords creates a connection to Kafka and submits records
-func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.Record, credentials types.CredentialsType) *kgo.Client {
+func CreateConnectionAndSubmitRecords(ctx context.Context) *kgo.Client {
 	var (
 		opts          []kgo.Opt
 		transactionId = fmt.Sprintf("eventbridge-%s", transactionSeed)
 	)
 	// Set up the kgo Client, which handles all the broker communication
 	// and underlies any producer/consumer actions.
-	seedEnv := utils.GetEnvOrDie("KAFKA_SEEDS")
+	seedEnv := tuUtils.GetEnvOrDie("KAFKA_SEEDS")
 	seeds := []string{seedEnv}
 	opts = append(opts,
 		kgo.SeedBrokers(seeds...),
@@ -44,14 +41,14 @@ func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.R
 	opts = append(opts, kgo.DialTLSConfig(new(tls.Config)))
 
 	//// Initializes SASL/SCRAM 256
-	opts = append(opts, kgo.SASL(scram.Auth{
-		User: credentials.Username,
-		Pass: credentials.Password,
-	}.AsSha256Mechanism()))
+	// Get Credentials from context
+	// opts = append(opts, kgo.SASL(scram.Auth{
+	// 	User: credentials.Username,
+	// 	Pass: credentials.Password,
+	// }.AsSha256Mechanism()))
 
 	client, err := kgo.NewClient(opts...)
-	utils.MaybeDie(err, "could not connect to Kafka")
-	defer client.Close()
+	tuUtils.MaybeDie(err, "could not connect to Kafka")
 
 	return client
 }
@@ -78,7 +75,7 @@ func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 
-	utils.Print("INFO", fmt.Sprintf("kafka Records produced %d", len(kafkaRecords)))
+	tuUtils.Print("INFO", fmt.Sprintf("kafka Records produced %d", len(kafkaRecords)))
 
 	//TODO Update Metric production
 	//ProduceMetric(topic, len(kafkaRecords))

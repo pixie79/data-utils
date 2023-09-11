@@ -14,7 +14,7 @@ import (
 
 	"github.com/pixie79/data-utils/types"
 
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -27,7 +27,7 @@ func GetCloudWatchSource(ctx context.Context, eventSource string) context.Contex
 	} else if len(eventSource) > 0 {
 		return context.WithValue(ctx, types.SourceKey{}, strings.ToLower(eventSource))
 	} else {
-		utils.Die("no source found")
+		tuUtils.Die("no source found")
 	}
 	return ctx
 }
@@ -44,19 +44,19 @@ func GetCloudWatchTopic(ctx context.Context, detailType string) context.Context 
 
 // CloudWatchCreateKafkaEvent retrieves the payload from the event detail
 func CloudWatchCreateKafkaEvent(ctx context.Context, event types.CloudWatchEvent, key []byte) ([]*kgo.Record, context.Context) {
-	utils.Print("INFO", fmt.Sprintf("Running CloudWatchCreateKafkaEvent %+v", event))
+	tuUtils.Print("INFO", fmt.Sprintf("Running CloudWatchCreateKafkaEvent %+v", event))
 	ctx = GetCloudWatchSource(ctx, event.Source)
 	ctx = GetCloudWatchTopic(ctx, event.DetailType)
 
 	var (
 		kafkaRecords []*kgo.Record
-		keyValue     = utils.CreateKey(key)
+		keyValue     = tuUtils.CreateKey(key)
 		detail       = event.Detail
 		source       = ctx.Value(types.SourceKey{}).(string)
 		topic        = ctx.Value(types.TopicKey{}).(string)
 	)
 
-	utils.Print("INFO", fmt.Sprintf("Running topic: %s, source: %s", topic, source))
+	tuUtils.Print("INFO", fmt.Sprintf("Running topic: %s, source: %s", topic, source))
 	if source == "salesforce" {
 		// If source is salesforce, unmarshal the payload and use the payload as value
 		customStructure := &types.SalesforceDetailEvent{}

@@ -14,6 +14,7 @@ import (
 
 	"github.com/pixie79/data-utils/aws"
 	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 )
 
 var (
@@ -32,9 +33,9 @@ var (
 
 // init is called before main(), sets up the environment
 func init() {
-	metricsServer = utils.GetEnvDefault("METRICS_SERVER", "localhost:8080")
-	metricsSecure = utils.GetEnvDefault("METRICS_SECURE", "true")
-	metricsUrlPath = utils.GetEnvDefault("METRICS_URL_PATH", "/api/cloud/prometheus/public_metrics")
+	metricsServer = tuUtils.GetEnvDefault("METRICS_SERVER", "localhost:8080")
+	metricsSecure = tuUtils.GetEnvDefault("METRICS_SECURE", "true")
+	metricsUrlPath = tuUtils.GetEnvDefault("METRICS_URL_PATH", "/api/cloud/prometheus/public_metrics")
 	if metricsSecure == "true" {
 		metricsProtocol = "https://"
 	} else {
@@ -43,16 +44,16 @@ func init() {
 
 	MetricsUrl = fmt.Sprintf("%s%s%s", metricsProtocol, metricsServer, metricsUrlPath)
 
-	awsSecretsManager = utils.GetEnvDefault("AWS_SECRETS_MANAGER", "false")
+	awsSecretsManager = tuUtils.GetEnvDefault("AWS_SECRETS_MANAGER", "false")
 	// If we're using AWS Secrets Manager, fetch the credentials from there
 	if awsSecretsManager == "true" {
-		metricsCredentialsKey = utils.GetEnvDefault("METRICS_CREDENTIALS_KEY", "metrics-proxy")
+		metricsCredentialsKey = tuUtils.GetEnvDefault("METRICS_CREDENTIALS_KEY", "metrics-proxy")
 		MetricsCredentials = aws.FetchCredentials(metricsCredentialsKey)
 	} else {
 		// Otherwise, use the credentials from the environment
 		MetricsCredentials = types.CredentialsType{
-			Username: utils.GetEnvDefault("METRICS_USERNAME", ""),
-			Password: utils.GetEnvDefault("METRICS_PASSWORD", ""),
+			Username: tuUtils.GetEnvDefault("METRICS_USERNAME", ""),
+			Password: tuUtils.GetEnvDefault("METRICS_PASSWORD", ""),
 		}
 
 	}

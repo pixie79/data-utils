@@ -8,7 +8,7 @@ package datadog
 import (
 	"strconv"
 
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 
 // init sets the metricsBatchLengthInt variable
 func init() {
-	metricsBatchLength = utils.GetEnvDefault("METRICS_BATCH_LENGTH", "800")
+	metricsBatchLength = tuUtils.GetEnvDefault("METRICS_BATCH_LENGTH", "800")
 	metricsBatchLengthInt, err = strconv.Atoi(metricsBatchLength)
-	utils.MaybeDie(err, "cannot convert string metricsBatchLength to int")
+	tuUtils.MaybeDie(err, "cannot convert string metricsBatchLength to int")
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/ohler55/ojg"
 	"github.com/ohler55/ojg/jp"
 	"github.com/ohler55/ojg/oj"
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 )
 
 var (
@@ -32,7 +32,7 @@ func getJsonStrings(data string) []string {
 	var result []string
 	obj, err := oj.ParseString(data)
 	if err != nil {
-		utils.Print("DEBUG", "going to try and parse as json lines")
+		tuUtils.Print("DEBUG", "going to try and parse as json lines")
 		obj = convertJsonLines(data)
 	}
 	switch obj.(type) {
@@ -44,7 +44,7 @@ func getJsonStrings(data string) []string {
 				panic(err)
 			}
 			result = append(result, b.String())
-			utils.Print("INFO", fmt.Sprintf("parse: %s", b.String()))
+			tuUtils.Print("INFO", fmt.Sprintf("parse: %s", b.String()))
 		}
 	case map[string]interface{}:
 		parse := localParse(obj)
@@ -53,7 +53,7 @@ func getJsonStrings(data string) []string {
 			panic(err)
 		}
 		result = append(result, b.String())
-		utils.Print("INFO", fmt.Sprintf("parse: %s", b.String()))
+		tuUtils.Print("INFO", fmt.Sprintf("parse: %s", b.String()))
 	default:
 		panic("unknown type")
 	}
@@ -63,9 +63,9 @@ func getJsonStrings(data string) []string {
 func localParse(obj any) any {
 	x, err := jp.ParseString("$.name")
 	if err != nil {
-		utils.Print("ERROR", fmt.Sprintf("error parsing json: %s", err))
+		tuUtils.Print("ERROR", fmt.Sprintf("error parsing json: %s", err))
 	}
-	utils.Print("INFO", fmt.Sprintf("obj: %T", obj))
+	tuUtils.Print("INFO", fmt.Sprintf("obj: %T", obj))
 	result := x.Get(obj)
 	return result
 }
@@ -85,7 +85,7 @@ func convertJsonLines(data string) any {
 	result := strings.Join(payload, ",")
 	obj, err := oj.ParseString("[" + result + "]")
 	if err != nil {
-		utils.Print("ERROR", fmt.Sprintf("error parsing jsonlines: %s", err))
+		tuUtils.Print("ERROR", fmt.Sprintf("error parsing jsonlines: %s", err))
 	}
 	return obj
 }
@@ -104,7 +104,7 @@ func TestGetJson(t *testing.T) {
 		for _, tt := range tests {
 			t.Run(tt.name, func(t *testing.T) {
 				result := getJsonStrings(tt.event)
-				utils.Print("INFO", fmt.Sprintf("result: %s", result))
+				tuUtils.Print("INFO", fmt.Sprintf("result: %s", result))
 
 				if result[0] != tt.topic[0] {
 					t.Errorf("got %s, want %s", result, tt.topic)
@@ -136,12 +136,12 @@ func TestFindJsonTopicFromBody(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := context.Background()
-			utils.Print("INFO", fmt.Sprintf("Event: %s", tt.apiEvent.Body))
+			tuUtils.Print("INFO", fmt.Sprintf("Event: %s", tt.apiEvent.Body))
 			payloads, _ := ApiGwCreateKafkaEvent(ctx, tt.apiEvent, []byte(""))
 			for key, record := range payloads {
-				utils.Print("INFO", fmt.Sprintf("Topic: %s", record.Topic))
-				utils.Print("INFO", fmt.Sprintf("Value: %s", record.Value))
-				utils.Print("INFO", fmt.Sprintf("Key: %d, Want Topic %s, Got %s", key, tt.topic[key], record.Topic))
+				tuUtils.Print("INFO", fmt.Sprintf("Topic: %s", record.Topic))
+				tuUtils.Print("INFO", fmt.Sprintf("Value: %s", record.Value))
+				tuUtils.Print("INFO", fmt.Sprintf("Key: %d, Want Topic %s, Got %s", key, tt.topic[key], record.Topic))
 				if record.Topic != tt.topic[key] {
 					t.Errorf("got %s, want %s", record.Topic, tt.topic)
 				}

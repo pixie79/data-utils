@@ -5,21 +5,24 @@
 
 package utils
 
-// import (
-// 	"fmt"
-// 	"os"
+import (
+	// 	"fmt"
+	// 	"os"
 
-// 	"golang.org/x/exp/slog"
-// )
+	// 	"golang.org/x/exp/slog"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
+)
 
-// var (
-// 	Logger      *slog.Logger                   // Logger is the default logger
-// 	LogLevel    string                         // logLevel is the log level
-// )
+var (
+	// 	Logger      *slog.Logger                   // Logger is the default logger
+	// 	LogLevel    string                         // logLevel is the log level
+	Environment = tuUtils.GetEnvDefault("ENVIRONMENT", "dev") // Environment is the default environment
+	Prefix      = tuUtils.GetEnvDefault("PREFIX", "data")     // Prefix is the default prefix
+)
 
 // // init loads the .env file and sets the log level
 // func init() {
-// 	LogLevel = GetEnv("LOG_LEVEL", "INFO")
+// 	LogLevel = tuUtils.GetEnvDefault("LOG_LEVEL", "INFO")
 // 	Logger = initLog()
 // }
 

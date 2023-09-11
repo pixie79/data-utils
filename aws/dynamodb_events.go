@@ -15,6 +15,7 @@ import (
 	"github.com/pixie79/data-utils/types"
 
 	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
@@ -27,7 +28,7 @@ func GetDynamoDBSource(eventSourceArn string) string {
 	} else if len(eventSourceArn) > 0 {
 		return strings.ToLower(eventSourceArn)
 	} else {
-		utils.Die("no source found")
+		tuUtils.Die("no source found")
 	}
 	return ""
 }
@@ -36,7 +37,7 @@ func GetDynamoDBSource(eventSourceArn string) string {
 func DynamoDbCreateKafkaEvent(ctx context.Context, event types.DynamoDBEvent, key []byte) ([]*kgo.Record, context.Context) {
 	var (
 		kafkaRecords []*kgo.Record
-		keyValue     = utils.CreateKey(key)
+		keyValue     = tuUtils.CreateKey(key)
 		source       = GetDynamoDBSource(event.Records[0].EventSourceArn)
 		topic        = strings.ToLower(utils.Prefix) + `-dynamodb-` + strings.ToLower(source)
 	)
@@ -56,9 +57,9 @@ func DynamoDbCreateKafkaEvent(ctx context.Context, event types.DynamoDBEvent, ke
 
 func MarshalDynamoDBEventToLocal(event events.DynamoDBEvent) types.DynamoDBEvent {
 	holdingEvent, err := json.Marshal(event)
-	utils.MaybeDie(err, "unable to parse raw event: %+v")
+	tuUtils.MaybeDie(err, "unable to parse raw event: %+v")
 	newEvent := types.DynamoDBEvent{}
 	err = json.Unmarshal(holdingEvent, &newEvent)
-	utils.MaybeDie(err, "unable to load event: %+v")
+	tuUtils.MaybeDie(err, "unable to load event: %+v")
 	return newEvent
 }

@@ -3,13 +3,14 @@ package aws
 import (
 	"context"
 	"encoding/json"
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/pixie79/data-utils/types"
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"reflect"
-	"testing"
-	"time"
 )
 
 var (

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 	"github.com/tidwall/gjson"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
@@ -17,7 +17,7 @@ import (
 func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequest, key []byte) ([]*kgo.Record, context.Context) {
 	var (
 		kafkaRecords      []*kgo.Record
-		keyValue          = utils.CreateKey(key)
+		keyValue          = tuUtils.CreateKey(key)
 		source            string
 		topic             string
 		payloadKey        string
@@ -31,7 +31,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		source = event.PathParameters["proxy"]
 		source = strings.ToLower(source)
 	} else {
-		utils.MaybeDie(fmt.Errorf("no source found"), "api gw proxy path parameter not found")
+		tuUtils.MaybeDie(fmt.Errorf("no source found"), "api gw proxy path parameter not found")
 	}
 
 	if source == "electrum" {
@@ -41,15 +41,15 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		partialPayloadKey = "tranInfo"
 	}
 
-	utils.Print("DEBUG", fmt.Sprintf("Source is: %s", source))
+	tuUtils.Print("DEBUG", fmt.Sprintf("Source is: %s", source))
 
 	decodedPayload := make([]byte, base64.StdEncoding.DecodedLen(len(event.Body)))
 	n, err := base64.StdEncoding.Decode(decodedPayload, []byte(event.Body))
-	utils.MaybeDie(err, "unable to decode base64 payload")
+	tuUtils.MaybeDie(err, "unable to decode base64 payload")
 
 	//payloads := ReturnListFromString(string(decodedPayload[:n]))
 	if !gjson.Valid(string(decodedPayload[:n])) {
-		utils.MaybeDie(errors.New("invalid json"), "error parsing json")
+		tuUtils.MaybeDie(errors.New("invalid json"), "error parsing json")
 	}
 	//value1 := gjson.Get(string(decodedPayload[:n]), ".")
 	//m, ok := gjson.Parse(string(decodedPayload[:n])).Value().(map[string]interface{})
@@ -61,7 +61,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 	fmt.Printf("length: %d\n\n", len(m))
 	for _, payload := range m {
 		payloadJson, err := json.Marshal(payload)
-		utils.MaybeDie(err, "unable to marshal payload")
+		tuUtils.MaybeDie(err, "unable to marshal payload")
 
 		if topicInBody {
 			topic = strings.ToLower(source) + "-" + gjson.Get(
@@ -78,7 +78,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 			value = payloadJson
 		}
 
-		utils.Print("DEBUG", fmt.Sprintf("topic: %s, value: %s, key: %s", topic, value, key))
+		tuUtils.Print("DEBUG", fmt.Sprintf("topic: %s, value: %s, key: %s", topic, value, key))
 
 		payloadEvent := &kgo.Record{
 			Topic: topic,
@@ -102,11 +102,11 @@ func ReturnListFromString(body string) []map[string]interface{} {
 	err := json.Unmarshal([]byte(body), &payloads)
 	if err != nil {
 		err = json.Unmarshal([]byte(body), &payload)
-		utils.MaybeDie(err, "unable to unmarshal json body")
+		tuUtils.MaybeDie(err, "unable to unmarshal json body")
 		payloads = append(payloads, payload.(map[string]interface{}))
 	}
-	utils.MaybeDie(err, "unable to unmarshal json body")
+	tuUtils.MaybeDie(err, "unable to unmarshal json body")
 
-	utils.Print("INFO", fmt.Sprintf("number of items in payload: %d", len(payloads)))
+	tuUtils.Print("INFO", fmt.Sprintf("number of items in payload: %d", len(payloads)))
 	return payloads
 }

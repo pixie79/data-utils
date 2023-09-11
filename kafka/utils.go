@@ -8,6 +8,7 @@ package kafka
 import (
 	"context"
 	"fmt"
+	"math/rand"
 
 	"github.com/twmb/franz-go/pkg/kgo"
 )
@@ -40,4 +41,14 @@ func RollbackTransaction(client *kgo.Client) error {
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 	return nil
+}
+
+func RandomString(n int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }

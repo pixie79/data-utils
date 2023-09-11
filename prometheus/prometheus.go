@@ -7,14 +7,15 @@ package prometheus
 
 import (
 	"fmt"
-	"github.com/pixie79/data-utils/types"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/pixie79/data-utils/types"
+
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
-	"github.com/pixie79/data-utils/utils"
+	tuUtils "github.com/pixie79/tiny-utils/utils"
 )
 
 // SplitTags splits the tags from a Prometheus metric into a slice of tags
@@ -47,7 +48,7 @@ func BuildMetrics(payload []string) []datadogV2.MetricSeries {
 
 		if len(splitLine) > 0 {
 			value, err := strconv.ParseFloat(string(splitLine[0][3]), 64)
-			utils.MaybeDie(err, fmt.Sprintf("could not convert to float: %+q", splitLine[0][0]))
+			tuUtils.MaybeDie(err, fmt.Sprintf("could not convert to float: %+q", splitLine[0][0]))
 
 			var tags []string
 			for _, tag := range SplitTags(string(splitLine[0][2])) {
