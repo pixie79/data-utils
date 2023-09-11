@@ -20,15 +20,15 @@ import (
 	"time"
 )
 
-var (
-	Environment string
-	Prefix      string
-)
+// var (
+// 	Environment string
+// 	Prefix      string
+// )
 
-func init() {
-	Environment = GetEnvDefault("ENVIRONMENT", "dev")
-	Prefix = GetEnvDefault("PREFIX", "")
-}
+// func init() {
+// 	Environment = GetEnvDefault("ENVIRONMENT", "dev")
+// 	Prefix = GetEnvDefault("PREFIX", "")
+// }
 
 // Print prints the given message with the specified log level.
 //
