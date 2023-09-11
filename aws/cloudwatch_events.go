@@ -9,9 +9,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
+
+	"github.com/pixie79/data-utils/types"
 
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -26,7 +27,7 @@ func GetCloudWatchSource(ctx context.Context, eventSource string) context.Contex
 	} else if len(eventSource) > 0 {
 		return context.WithValue(ctx, types.SourceKey{}, strings.ToLower(eventSource))
 	} else {
-		utils.Die(fmt.Errorf("source result empty"), "no source found")
+		utils.Die("no source found")
 	}
 	return ctx
 }

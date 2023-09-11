@@ -8,11 +8,11 @@ package aws
 import (
 	"context"
 	"encoding/json"
-	"fmt"
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/pixie79/data-utils/types"
 	"regexp"
 	"strings"
+
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/pixie79/data-utils/types"
 
 	"github.com/pixie79/data-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
@@ -27,7 +27,7 @@ func GetDynamoDBSource(eventSourceArn string) string {
 	} else if len(eventSourceArn) > 0 {
 		return strings.ToLower(eventSourceArn)
 	} else {
-		utils.Die(fmt.Errorf("source result empty"), "no source found")
+		utils.Die("no source found")
 	}
 	return ""
 }

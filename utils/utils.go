@@ -19,19 +19,34 @@ import (
 	"time"
 )
 
-
+// Die exits the program after logging an error message.
+//
+// It takes a message as a parameter and does not return anything.
 func Die(msg string) {
-	logger.Error(msg)
+	Logger.Error(msg)
 	os.Exit(1)
 }
 
+// MaybeDie is a function that checks if an error exists and calls the Die function with a formatted error message if it does.
+//
+// Parameters:
+// - err: the error to check.
+// - msg: the message to include in the error message.
 func MaybeDie(err error, msg string) {
 	if err != nil {
-		die(fmt.Sprintf("%s: %+v", msg, err))
+		Die(fmt.Sprintf("%s: %+v", msg, err))
 	}
 }
 
-// GetEnv Simple helper function to read an environment or return a default value
+// GetEnv retrieves the value of the environment variable specified by the key.
+// If the environment variable does not exist, it returns the default value.
+//
+// Parameters:
+// - key: the name of the environment variable to retrieve.
+// - defaultVal: the value to return if the environment variable does not exist.
+//
+// Return:
+// - string: the value of the environment variable or the default value.
 func GetEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
@@ -39,16 +54,23 @@ func GetEnv(key string, defaultVal string) string {
 	return defaultVal
 }
 
-// GetEnvOrDie Simple helper function to read an environment or die
+// GetEnvOrDie returns the value of the specified environment variable or Dies.
+//
+// It takes a key string as a parameter and returns a string value.
 func GetEnvOrDie(key string) string {
 	value, exists := os.LookupEnv(key)
 	if !exists {
-		Die(Err, fmt.Sprintf("missing environment variable %s", key))
+		Die(fmt.Sprintf("missing environment variable %s", key))
 	}
 	return value
 }
 
-// LinesFromReader reads lines from a reader
+// LinesFromReader returns an array of strings representing each line read from the provided io.Reader.
+//
+// The function takes an io.Reader as a parameter and scans it line by line using a bufio.Scanner.
+// Each line is then appended to the `lines` array.
+// After scanning is complete, the function checks for any errors and calls the MaybeDie function if there is any error.
+// Finally, the `lines` array is returned.
 func LinesFromReader(r io.Reader) []string {
 	var lines []string
 
@@ -63,7 +85,15 @@ func LinesFromReader(r io.Reader) []string {
 	return lines
 }
 
-// UrlToLines reads lines from a url
+// UrlToLines retrieves the contents of a URL and returns them line by line.
+//
+// Parameters:
+// - url: the URL to retrieve the contents from.
+// - username: the username for basic authentication. If not needed, leave it empty.
+// - password: the password for basic authentication. If not needed, leave it empty.
+//
+// Returns:
+// - lines: an array of strings containing the lines of the retrieved content.
 func UrlToLines(url string, username string, password string) []string {
 	client := http.Client{Timeout: 5 * time.Second}
 
@@ -84,13 +114,21 @@ func UrlToLines(url string, username string, password string) []string {
 	}(res.Body)
 
 	if !InBetween(res.StatusCode, 200, 299) {
-		Die(fmt.Errorf("%d", res.StatusCode), fmt.Sprintf("url access error %s", url))
+		Die(fmt.Sprintf("url access error %s, Status Code: %d", url, res.StatusCode))
 	}
 
 	return LinesFromReader(res.Body)
 }
 
-// InBetween checks if a number is in between two other numbers
+// InBetween checks if a number is within a given range.
+//
+// Parameters:
+//   - i: the number to check
+//   - min: the minimum range value (inclusive)
+//   - max: the maximum range value (inclusive)
+//
+// Returns:
+//   - bool: true if the number is within the range, false otherwise.
 func InBetween(i, min, max int) bool {
 	if (i >= min) && (i <= max) {
 		return true
@@ -99,7 +137,11 @@ func InBetween(i, min, max int) bool {
 	}
 }
 
-// ChunkBy splits a slice into chunks of a given size
+// ChunkBy splits a slice of items into smaller chunks of a specified size.
+//
+// items: The slice of items to be split.
+// chunkSize: The size of each chunk.
+// [][]T: A slice of slices, where each slice represents a chunk of items.
 func ChunkBy[T any](items []T, chunkSize int) (chunks [][]T) {
 	for chunkSize < len(items) {
 		items, chunks = items[chunkSize:], append(chunks, items[0:chunkSize:chunkSize])
@@ -131,7 +173,14 @@ func B64DecodeMsg(b64Key string, offsetF ...int) ([]byte, error) {
 	return result, nil
 }
 
-// Contains does the list contain the matching string?
+// Contains checks if a string is present in a slice of strings.
+//
+// Parameters:
+// - s: the slice of strings to search in.
+// - str: the string to search for.
+//
+// Returns:
+// - bool: true if the string is found, false otherwise.
 func Contains(s []string, str string) bool {
 	for _, v := range s {
 		if strings.EqualFold(v, str) {
@@ -167,7 +216,10 @@ func DifferenceInSlices(l1, l2 []string) ([]string, []string, []string) {
 	return missingL1, missingL2, common
 }
 
-// CreateBytes creates a byte array from any data
+// CreateBytes encodes the given data to bytes using gob encoding.
+//
+// data: the data to be encoded
+// []byte: the encoded data as a byte slice
 func CreateBytes(data any) []byte {
 	var envBuffer bytes.Buffer
 	encData := gob.NewEncoder(&envBuffer)
@@ -176,11 +228,18 @@ func CreateBytes(data any) []byte {
 	return envBuffer.Bytes()
 }
 
+// TimePtr takes a time.Time parameter and returns the same time.Time value.
+//
+// t: a time.Time parameter.
+// Returns: a time.Time value.
 func TimePtr(t time.Time) time.Time {
 	return t
 }
 
-// CreateKey creates a key from a byte array
+// CreateKey generates a key for encryption.
+//
+// key: The byte array used to generate the key.
+// Returns: The generated key.
 func CreateKey(key []byte) []byte {
 	// If key is empty, use hostname as key
 	if len(key) < 1 {
