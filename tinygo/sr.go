@@ -21,10 +21,10 @@ import (
 //
 // Returns:
 // - The retrieved schema (as a string).
-func GetSchemaTiny(id string, url string) string {
+func GetSchemaTiny(id string) string {
 	registry := sr.NewClient()
 	schemaIdInt, err := strconv.Atoi(id)
-	utils.Logger.Debug(fmt.Sprintf("Schema ID: %s", id))
+	utils.Print("DEBUG", fmt.Sprintf("Schema ID: %s", id))
 	utils.MaybeDie(err, fmt.Sprintf("SCHEMA_ID not an integer: %s", id))
 	schema, err := registry.LookupSchemaById(schemaIdInt)
 	utils.MaybeDie(err, fmt.Sprintf("Unable to retrieve schema for ID: %s", id))

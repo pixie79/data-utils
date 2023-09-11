@@ -6,13 +6,12 @@ require (
 	github.com/DataDog/datadog-api-client-go/v2 v2.14.0
 	github.com/aws/aws-lambda-go v1.41.0
 	github.com/aws/aws-sdk-go v1.44.300
-	github.com/joho/godotenv v1.5.1
 	github.com/landoop/schema-registry v0.0.0-20190327143759-50a5701c1891
 	github.com/linkedin/goavro/v2 v2.12.0
 	github.com/ohler55/ojg v1.19.1
+	github.com/redpanda-data/redpanda/src/go/transform-sdk v0.0.0-20230911115422-70cb23b6bd2a
 	github.com/tidwall/gjson v1.12.1
 	github.com/twmb/franz-go v1.14.1
-	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1
 )
 
 require (

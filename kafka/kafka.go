@@ -9,6 +9,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+
 	"github.com/pixie79/data-utils/types"
 
 	"github.com/pixie79/data-utils/utils"
@@ -16,11 +17,15 @@ import (
 	"github.com/twmb/franz-go/pkg/sasl/scram"
 )
 
+var (
+	transactionSeed = utils.RandomString(30)
+)
+
 // CreateConnectionAndSubmitRecords creates a connection to Kafka and submits records
 func CreateConnectionAndSubmitRecords(ctx context.Context, kafkaRecords []*kgo.Record, credentials types.CredentialsType) *kgo.Client {
 	var (
 		opts          []kgo.Opt
-		transactionId = fmt.Sprintf("eventbridge-%s", utils.Hostname)
+		transactionId = fmt.Sprintf("eventbridge-%s", transactionSeed)
 	)
 	// Set up the kgo Client, which handles all the broker communication
 	// and underlies any producer/consumer actions.
@@ -67,12 +72,13 @@ func SubmitRecords(ctx context.Context, client *kgo.Client, kafkaRecords []*kgo.
 	}
 
 	// we're running in autocommit mode by default, which will flush all the
+
 	// buffered messages before attempting to commit the transaction.
 	if err := client.EndTransaction(ctx, kgo.TryCommit); err != nil {
 		return fmt.Errorf("error committing transaction: %v", err)
 	}
 
-	utils.Logger.Info(fmt.Sprintf("kafka Records produced %d", len(kafkaRecords)))
+	utils.Print("INFO", fmt.Sprintf("kafka Records produced %d", len(kafkaRecords)))
 
 	//TODO Update Metric production
 	//ProduceMetric(topic, len(kafkaRecords))

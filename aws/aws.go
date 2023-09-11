@@ -8,6 +8,7 @@ package aws
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/pixie79/data-utils/types"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -25,14 +26,14 @@ func FetchCredentials(credentialsKey string) types.CredentialsType {
 	credentials := types.CredentialsType{}
 	err := json.Unmarshal([]byte(credentialsString), &credentials)
 	utils.MaybeDie(err, "could not explode credentials")
-	utils.Logger.Debug(fmt.Sprintf("credentials retrieved: %s", credentialsKey))
+	utils.Print("DEBUG", fmt.Sprintf("credentials retrieved: %s", credentialsKey))
 	return credentials
 }
 
 // GetSecretManagerValue retrieves a secret from AWS Secrets Manager
 func GetSecretManagerValue(passwordKey string) string {
-	region := utils.GetEnv("AWS_REGION", "eu-west-1")
-	utils.Logger.Debug("creating AWS Session")
+	region := utils.GetEnvDefault("AWS_REGION", "eu-west-1")
+	utils.Print("DEBUG", "creating AWS Session")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
@@ -49,15 +50,15 @@ func GetSecretManagerValue(passwordKey string) string {
 	})
 	utils.MaybeDie(err, fmt.Sprintf("failed to retrieve secret called %s ", passwordKey))
 
-	utils.Logger.Debug("Returning secret to calling function")
+	utils.Print("DEBUG", "Returning secret to calling function")
 	result := *resp.SecretString
 	return result
 }
 
 // GetSsmParam retrieves a parameter from AWS SSM Parameter Store
 func GetSsmParam(parameterPath string) string {
-	region := utils.GetEnv("AWS_REGION", "eu-west-1")
-	utils.Logger.Debug("creating AWS Session")
+	region := utils.GetEnvDefault("AWS_REGION", "eu-west-1")
+	utils.Print("DEBUG", "creating AWS Session")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
@@ -75,13 +76,13 @@ func GetSsmParam(parameterPath string) string {
 	})
 	utils.MaybeDie(err, fmt.Sprintf("failed to get Parameter from store: %+v", err))
 	value := *param.Parameter.Value
-	utils.Logger.Debug(fmt.Sprintf("parameter retrieved: %s", parameterPath))
+	utils.Print("DEBUG", fmt.Sprintf("parameter retrieved: %s", parameterPath))
 	return value
 }
 
 // CreateCloudwatchMetric creates a metric in AWS Cloudwatch
 func CreateCloudwatchMetric(metric []*cloudwatch.MetricDatum, namespace string) {
-	region := utils.GetEnv("AWS_REGION", "eu-west-1")
+	region := utils.GetEnvDefault("AWS_REGION", "eu-west-1")
 	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	utils.MaybeDie(err, "could not connect to AWS")
 
@@ -98,5 +99,5 @@ func CreateCloudwatchMetric(metric []*cloudwatch.MetricDatum, namespace string) 
 		MetricData: metric,
 	})
 	utils.MaybeDie(err, fmt.Sprintf("failed to create cloudwatch metric: %+v", err))
-	utils.Logger.Debug(fmt.Sprintf("cloudwatch metric created: %s", namespace))
+	utils.Print("DEBUG", fmt.Sprintf("cloudwatch metric created: %s", namespace))
 }

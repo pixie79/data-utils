@@ -25,7 +25,7 @@ func GetSchema(id string, url string) string {
 	registry, err := sr.NewClient(url)
 	utils.MaybeDie(err, fmt.Sprintf("Cannot connect to Schema Registry: %+v", err))
 	schemaIdInt, err := strconv.Atoi(id)
-	utils.Logger.Debug(fmt.Sprintf("Schema ID: %s", id))
+	utils.Print("DEBUG", fmt.Sprintf("Schema ID: %s", id))
 	utils.MaybeDie(err, fmt.Sprintf("SCHEMA_ID not an integer: %s", id))
 	schema, err := registry.GetSchemaByID(schemaIdInt)
 	utils.MaybeDie(err, fmt.Sprintf("Unable to retrieve schema for ID: %s", id))

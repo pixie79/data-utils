@@ -12,6 +12,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"sort"
@@ -19,12 +20,46 @@ import (
 	"time"
 )
 
+var (
+	Environment string
+	Prefix      string
+)
+
+func init() {
+	Environment = GetEnvDefault("ENVIRONMENT", "dev")
+	Prefix = GetEnvDefault("PREFIX", "")
+}
+
+// Print prints the given message with the specified log level.
+//
+// Parameters:
+//   - level: the log level to use (e.g. "INFO", "ERROR").
+//   - msg: the message to be printed.
+func Print(level, msg string) {
+	fmt.Printf("%s: %s\n", strings.ToUpper(level), msg)
+}
+
+// GetEnvDefault retrieves the value of the environment variable specified by the key.
+// If the environment variable does not exist, it returns the default value.
+//
+// Parameters:
+// - key: the name of the environment variable to retrieve.
+// - defaultVal: the value to return if the environment variable does not exist.
+//
+// Return:
+// - string: the value of the environment variable or the default value.
+func GetEnvDefault(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return defaultVal
+}
+
 // Die exits the program after logging an error message.
 //
 // It takes a message as a parameter and does not return anything.
 func Die(msg string) {
-	Logger.Error(msg)
-	os.Exit(1)
+	panic(msg)
 }
 
 // MaybeDie is a function that checks if an error exists and calls the Die function with a formatted error message if it does.
@@ -38,29 +73,13 @@ func MaybeDie(err error, msg string) {
 	}
 }
 
-// GetEnv retrieves the value of the environment variable specified by the key.
-// If the environment variable does not exist, it returns the default value.
-//
-// Parameters:
-// - key: the name of the environment variable to retrieve.
-// - defaultVal: the value to return if the environment variable does not exist.
-//
-// Return:
-// - string: the value of the environment variable or the default value.
-func GetEnv(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultVal
-}
-
-// GetEnvOrDie returns the value of the specified environment variable or Dies.
+// GetEnvOrDie returns the value of the specified environment variable or exits the program.
 //
 // It takes a key string as a parameter and returns a string value.
 func GetEnvOrDie(key string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		Die(fmt.Sprintf("missing environment variable %s", key))
+	value, set := os.LookupEnv(key)
+	if !set {
+		Die(fmt.Sprintf("%s: environment variable not set", key))
 	}
 	return value
 }
@@ -248,4 +267,14 @@ func CreateKey(key []byte) []byte {
 	} else {
 		return key
 	}
+}
+
+func RandomString(n int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }

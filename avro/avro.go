@@ -36,7 +36,6 @@ func DecodeAvro(schema string, event []byte) map[string]interface{} {
 	utils.MaybeDie(err, "Error decoding base64")
 	native, _, err := sourceCodec.NativeFromBinary(newEvent)
 	utils.MaybeDie(err, "Error creating native from binary")
-	// utils.Logger.Debug(prettyPrint(native))
 	nestedMap, ok := native.(map[string]interface{})
 	if !ok {
 		utils.Die("Unable to convert native to map[string]interface{}")

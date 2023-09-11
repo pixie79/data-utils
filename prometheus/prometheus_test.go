@@ -2,8 +2,9 @@ package prometheus
 
 import (
 	"fmt"
-	"github.com/pixie79/data-utils/utils"
 	"testing"
+
+	"github.com/pixie79/data-utils/utils"
 )
 
 // TestSplitTags tests the SplitTags function
@@ -11,7 +12,7 @@ func TestSplitTags(t *testing.T) {
 	data := `a="b",c="d",e="f"`
 	result := SplitTags(data)
 
-	utils.Logger.Info(fmt.Sprintf("%+v", result))
+	utils.Print("INFO", fmt.Sprintf("%+v", result))
 	if len(result) != 5 {
 		t.Errorf("expected 5 tags, got %d", len(result))
 	}

@@ -22,7 +22,7 @@ var (
 
 // TestGetIPs tests the GetIPs function
 func TestGetEnv(t *testing.T) {
-	result := GetEnv("DEBUG_LEVEL", "TEST")
+	result := GetEnvDefault("DEBUG_LEVEL", "TEST")
 	if result != "TEST" {
 		t.Errorf("result was incorrect, got: %s, want: %s.", result, "TEST")
 	}

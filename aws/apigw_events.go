@@ -6,11 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/pixie79/data-utils/utils"
 	"github.com/tidwall/gjson"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"strings"
 )
 
 func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequest, key []byte) ([]*kgo.Record, context.Context) {
@@ -40,7 +41,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 		partialPayloadKey = "tranInfo"
 	}
 
-	utils.Logger.Debug(fmt.Sprintf("Source is: %s", source))
+	utils.Print("DEBUG", fmt.Sprintf("Source is: %s", source))
 
 	decodedPayload := make([]byte, base64.StdEncoding.DecodedLen(len(event.Body)))
 	n, err := base64.StdEncoding.Decode(decodedPayload, []byte(event.Body))
@@ -54,7 +55,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 	//m, ok := gjson.Parse(string(decodedPayload[:n])).Value().(map[string]interface{})
 	m := gjson.GetManyBytes(decodedPayload[:n], "")
 	//if !ok {
-	//	utils.Logger.Info("Not a map")
+	//	utils.Print("INFO", "Not a map")
 	//}
 	fmt.Printf("%+v\n", m)
 	fmt.Printf("length: %d\n\n", len(m))
@@ -77,7 +78,7 @@ func ApiGwCreateKafkaEvent(ctx context.Context, event events.APIGatewayProxyRequ
 			value = payloadJson
 		}
 
-		utils.Logger.Debug(fmt.Sprintf("topic: %s, value: %s, key: %s", topic, value, key))
+		utils.Print("DEBUG", fmt.Sprintf("topic: %s, value: %s, key: %s", topic, value, key))
 
 		payloadEvent := &kgo.Record{
 			Topic: topic,
@@ -106,6 +107,6 @@ func ReturnListFromString(body string) []map[string]interface{} {
 	}
 	utils.MaybeDie(err, "unable to unmarshal json body")
 
-	utils.Logger.Info(fmt.Sprintf("number of items in payload: %d", len(payloads)))
+	utils.Print("INFO", fmt.Sprintf("number of items in payload: %d", len(payloads)))
 	return payloads
 }
