@@ -14,12 +14,31 @@ import (
 	sr "github.com/landoop/schema-registry"
 	avro "github.com/linkedin/goavro/v2"
 	"github.com/pixie79/data-utils/utils"
+	srt "github.com/redpanda-data/redpanda/src/go/transform-sdk/sr"
 )
 
 // GetSchemaIdFromPayload returns the schema id from the payload
 func GetSchemaIdFromPayload(msg []byte) int {
 	schemaID := binary.BigEndian.Uint32(msg[1:5])
 	return int(schemaID)
+}
+
+// GetSchemaTiny retrieves the schema with the given ID from the specified URL.
+//
+// Parameters:
+// - id: The ID of the schema (as a string).
+// - url: The URL of the Schema Registry.
+//
+// Returns:
+// - The retrieved schema (as a string).
+func GetSchemaTiny(id string, url string) string {
+	registry := srt.NewClient()
+	schemaIdInt, err := strconv.Atoi(id)
+	utils.Logger.Debug(fmt.Sprintf("Schema ID: %s", id))
+	utils.MaybeDie(err, fmt.Sprintf("SCHEMA_ID not an integer: %s", id))
+	schema, err := registry.LookupSchemaById(schemaIdInt)
+	utils.MaybeDie(err, fmt.Sprintf("Unable to retrieve schema for ID: %s", id))
+	return schema.Schema
 }
 
 // GetSchema retrieves the schema with the given ID from the specified URL.
