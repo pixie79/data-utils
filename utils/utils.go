@@ -243,7 +243,8 @@ func TimePtr(t time.Time) time.Time {
 func CreateKey(key []byte) []byte {
 	// If key is empty, use hostname as key
 	if len(key) < 1 {
-		return []byte(Hostname)
+		Die("No key provided: try []byte(Hostname)")
+		return []byte{}
 	} else {
 		return key
 	}
