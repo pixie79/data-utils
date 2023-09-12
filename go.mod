@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.44.300
 	github.com/landoop/schema-registry v0.0.0-20190327143759-50a5701c1891
 	github.com/ohler55/ojg v1.19.1
-	github.com/pixie79/tiny-utils v0.0.8
+	github.com/pixie79/tiny-utils v0.0.9
 	github.com/tidwall/gjson v1.12.1
 	github.com/twmb/franz-go v1.14.1
 )
