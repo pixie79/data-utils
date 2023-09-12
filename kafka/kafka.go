@@ -7,22 +7,17 @@ package kafka
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 
 	tuUtils "github.com/pixie79/tiny-utils/utils"
 	"github.com/twmb/franz-go/pkg/kgo"
 )
 
-var (
-	transactionSeed = RandomString(30)
-)
-
 // CreateConnectionAndSubmitRecords creates a connection to Kafka and submits records
 func CreateConnectionAndSubmitRecords(ctx context.Context) *kgo.Client {
 	var (
 		opts          []kgo.Opt
-		transactionId = fmt.Sprintf("eventbridge-%s", transactionSeed)
+		transactionId = RandomString(20)
 	)
 	// Set up the kgo Client, which handles all the broker communication
 	// and underlies any producer/consumer actions.
@@ -38,7 +33,7 @@ func CreateConnectionAndSubmitRecords(ctx context.Context) *kgo.Client {
 		kgo.ProducerBatchCompression(kgo.SnappyCompression()),
 	)
 	// Initialize public CAs for TLS
-	opts = append(opts, kgo.DialTLSConfig(new(tls.Config)))
+	// opts = append(opts, kgo.DialTLSConfig(new(tls.Config)))
 
 	//// Initializes SASL/SCRAM 256
 	// Get Credentials from context
